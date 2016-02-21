@@ -9,4 +9,5 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface INewsDAO extends IDAO<News, Integer>{
+
 }
