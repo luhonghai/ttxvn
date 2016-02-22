@@ -9,23 +9,26 @@ import javax.persistence.Id;
  * Created by longdnguyen on 2/21/16.
  */
 @Entity
-public class Category extends AbstractModel{
-    private int id;
-    private String title;
-    private String description;
+public class Category implements IBaseEntity {
 
     @Id
     @Column(name = "id")
-    public int getId() {
+    private long id;
+
+    @Column(name = "title")
+    private String title;
+
+    @Column(name = "description")
+    private String description;
+
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    @Basic
-    @Column(name = "title")
     public String getTitle() {
         return title;
     }
@@ -34,8 +37,6 @@ public class Category extends AbstractModel{
         this.title = title;
     }
 
-    @Basic
-    @Column(name = "description")
     public String getDescription() {
         return description;
     }
@@ -61,9 +62,9 @@ public class Category extends AbstractModel{
 
     @Override
     public int hashCode() {
-        int result = id;
+        long result = id;
         result = 31 * result + (title != null ? title.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
-        return result;
+        return (int)result;
     }
 }

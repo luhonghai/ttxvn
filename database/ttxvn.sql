@@ -33,6 +33,20 @@ CREATE TABLE `category` (
 INSERT INTO `category` (`id`, `title`, `description`) VALUES
 (4, 'Thời Sự', 'Thời Sự');
 
+
+CREATE TABLE IF NOT EXISTS `user` (
+  `id` bigint(20) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `role` int, -- 0 is staff, 1 is customer
+  `first_name` varchar(50) DEFAULT NULL,
+  `last_name` varchar(50) DEFAULT NULL,
+  `email` VARCHAR(100)  NOT NULL ,
+  `password` VARCHAR(100)  NOT NULL ,
+  `gender` BIT DEFAULT 1,
+  `dob` DATETIME,
+  `phone` VARCHAR(20) DEFAULT NULL,
+  `address` varchar(500) DEFAULT NULL
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
 -- --------------------------------------------------------
 
 --

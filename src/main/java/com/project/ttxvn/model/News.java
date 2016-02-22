@@ -1,6 +1,5 @@
 package com.project.ttxvn.model;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -10,29 +9,44 @@ import java.sql.Date;
  * Created by longdnguyen on 2/21/16.
  */
 @Entity
-public class News extends AbstractModel{
-    private int id;
-    private String title;
-    private Date dateTime;
-    private String content;
-    private String image;
-    private String author;
-    private String source;
-    private String location;
-    private int catId;
-
+public class News implements IBaseEntity {
     @Id
     @Column(name = "id")
-    public int getId() {
+    private long id;
+
+    @Column(name = "title")
+    private String title;
+
+    @Column(name = "date_time")
+    private Date dateTime;
+
+    @Column(name = "content")
+    private String content;
+
+    @Column(name = "image")
+    private String image;
+
+    @Column(name = "author")
+    private String author;
+
+    @Column(name = "source")
+    private String source;
+
+    @Column(name = "location")
+    private String location;
+
+    @Column(name = "cat_id")
+    private int catId;
+
+
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    @Basic
-    @Column(name = "title")
     public String getTitle() {
         return title;
     }
@@ -41,8 +55,6 @@ public class News extends AbstractModel{
         this.title = title;
     }
 
-    @Basic
-    @Column(name = "date_time")
     public Date getDateTime() {
         return dateTime;
     }
@@ -51,8 +63,6 @@ public class News extends AbstractModel{
         this.dateTime = dateTime;
     }
 
-    @Basic
-    @Column(name = "content")
     public String getContent() {
         return content;
     }
@@ -61,8 +71,6 @@ public class News extends AbstractModel{
         this.content = content;
     }
 
-    @Basic
-    @Column(name = "image")
     public String getImage() {
         return image;
     }
@@ -71,8 +79,6 @@ public class News extends AbstractModel{
         this.image = image;
     }
 
-    @Basic
-    @Column(name = "author")
     public String getAuthor() {
         return author;
     }
@@ -81,8 +87,6 @@ public class News extends AbstractModel{
         this.author = author;
     }
 
-    @Basic
-    @Column(name = "source")
     public String getSource() {
         return source;
     }
@@ -91,8 +95,6 @@ public class News extends AbstractModel{
         this.source = source;
     }
 
-    @Basic
-    @Column(name = "location")
     public String getLocation() {
         return location;
     }
@@ -101,8 +103,6 @@ public class News extends AbstractModel{
         this.location = location;
     }
 
-    @Basic
-    @Column(name = "cat_id")
     public int getCatId() {
         return catId;
     }
@@ -133,7 +133,7 @@ public class News extends AbstractModel{
 
     @Override
     public int hashCode() {
-        int result = id;
+        int result = (int) id;
         result = 31 * result + (title != null ? title.hashCode() : 0);
         result = 31 * result + (dateTime != null ? dateTime.hashCode() : 0);
         result = 31 * result + (content != null ? content.hashCode() : 0);
