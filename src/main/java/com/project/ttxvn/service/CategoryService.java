@@ -59,6 +59,13 @@ public class CategoryService extends BaseService<Category, ICategoryDAO, Categor
     @Path("/list")
     @Produces("application/json")
     public List<Category> findAll() {
-        return super.findAll();
+        List<Category> list =  super.findAll();
+        NewsService newsService = new NewsService();
+        if (list != null && !list.isEmpty()) {
+            for (final Category category : list) {
+                category.setNewsCount(newsService.countByCategory(category.getId()));
+            }
+        }
+        return list;
     }
 }

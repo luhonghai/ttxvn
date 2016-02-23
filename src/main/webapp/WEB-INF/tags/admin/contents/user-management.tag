@@ -40,37 +40,37 @@
 			<div class="modal-body">
 				<form class="form-horizontal" role="form" id="dataModelForm">
 					<div class="form-group" id="dataModelID" style="display: none">
-						<label for="txtId" class="col-sm-2 control-label">ID</label>
+						<label class="col-sm-2 control-label">ID</label>
 						<div class="col-xs-4">
 							<input type="text" class="form-control" name="txtId" value="-1" />
 						</div>
 					</div>
 							<div class="form-group">
-								<label for="txtFirstName" class="col-sm-2 control-label">First name</label>
+								<label class="col-sm-2 control-label">First name</label>
 				                <div class="col-xs-4">
 				                  <input type="text" class="form-control" name="txtFirstName"/>
 				                </div>
 				              </div>
 				              <div class="form-group">
-				                <label for="txtSurname" class="col-sm-2 control-label">Last name</label>
+				                <label class="col-sm-2 control-label">Last name</label>
 				                <div class="col-xs-4">
 				                  <input type="text" class="form-control" name="txtLastName"/>
 				                </div>
 				              </div>
 				              <div class="form-group">
-				                <label for="txtEmail" class="col-sm-2 control-label">Email</label>
+				                <label class="col-sm-2 control-label">Email</label>
 				                <div class="col-xs-4">
 				                  <input type="text" class="form-control" name="txtEmail"/>
 				                </div>
 				              </div>
 				              <div class="form-group">
-				                <label for="txtPassword" class="col-sm-2 control-label">Password</label>
+				                <label class="col-sm-2 control-label">Password</label>
 				                <div class="col-xs-4">
 				                  <input type="password" class="form-control" name="txtPassword"/>
 				                </div>
 				              </div>
 				              <div class="form-group">
-				                <label for="txtCPassword" class="col-sm-2 control-label">Confirm Password</label>
+				                <label class="col-sm-2 control-label">Confirm Password</label>
 				                <div class="col-xs-4">
 				                  <input type="password" class="form-control" name="txtCPassword"/>
 				                </div>
@@ -93,13 +93,13 @@
 				                </div>
 				              </div>
 				              <div class="form-group">
-				                <label for="txtPhone" class="col-sm-2 control-label">Phone</label>
+				                <label class="col-sm-2 control-label">Phone</label>
 				                <div class="col-xs-4">
 				                  <input type="text" class="form-control" name="txtPhone"/>
 				                </div>
 				              </div>
 				              <div class="form-group">
-				                <label for="txtAddress" class="col-sm-2 control-label">Address</label>
+				                <label class="col-sm-2 control-label">Address</label>
 				                <div class="col-xs-4">
 				                  <textarea class="form-control" name="txtAddress"></textarea>
 				                </div>
@@ -114,13 +114,14 @@
 	</div>
 </div>
 	<script>
+		var target = "user"
 		var TableData = {
-			saveUrl: App.contextPath + "/json/user/save",
-			deleteUrl: App.contextPath + "/json/user/delete",
-			findUrl: App.contextPath + "/json/user/find",
-			listUrl : App.contextPath + "/json/user/findbyrole?role=<%=role.getId()%>",
+			saveUrl: App.contextPath + "/rest/" + target + "/save",
+			deleteUrl: App.contextPath + "/rest/" + target + "/delete",
+			findUrl: App.contextPath + "/rest/" + target + "/find",
+			listUrl : App.contextPath + "/rest/" + target + "/findbyrole?role=<%=role.getId()%>",
 			showAddForm: function() {
-				$("#dataModelTitle").html("Add customer");
+				$("#dataModelTitle").html("Add <%=role.toString()%>");
 				$("input[name=txtId]").val("-1");
    				$("input[name=txtFirstName]").val("");
    				$("input[name=txtLastName]").val("");
@@ -134,7 +135,7 @@
 				$("#dataModal").modal("show");
 			},
 			showEditForm: function(obj) {
-				$("#dataModelTitle").html("Edit customer");
+				$("#dataModelTitle").html("Edit <%=role.toString()%>");
 				$("input[name=txtId]").val(obj.id);
 				$("input[name=txtId]").prop("disabled", "disabled");
    				$("input[name=txtFirstName]").val(obj.firstName);
@@ -160,7 +161,7 @@
 			prepareObject: function() {
 				var obj = {
 						id : $("input[name=txtId]").val(),
-	       	        	role: <%=role%>,
+	       	        	role: <%=role.getId()%>,
 	       	        	firstName: $("input[name=txtFirstName]").val(),
 	       	        	lastName : $("input[name=txtLastName]").val(),
 	       	        	email: $("input[name=txtEmail]").val(),
@@ -184,13 +185,13 @@
 						(typeof data[i].dob == 'undefined' || data[i].dob <= 0) 
 							? "" 
 							: new Date(data[i].dob).customFormat("#DD#/#MM#/#YYYY#");
-					if (data.email == currentUser) {
-						data.skipDelete = true;
+					if (data[i].email.indexOf(currentUser) != -1 && currentUser.indexOf(data[i].email) != -1) {
+						data[i].skipDelete = true;
 					}
 				}
 				return data;
 			},
-			name : "Customer",
+			name : "<%=role.toString()%>",
 			columns : [
 				{data: "id", title: "ID"},
 				{data: "firstName", title: "First name"},

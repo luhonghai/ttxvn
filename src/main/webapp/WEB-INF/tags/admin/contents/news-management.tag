@@ -107,10 +107,10 @@ Select by category <select name="selFilterCategory">
 <script>
 	var target = "news";
 	var TableData = {
-		saveUrl: App.contextPath + "/json/" + target + "/save",
-		deleteUrl: App.contextPath + "/json/" + target + "/delete",
-		findUrl: App.contextPath + "/json/" + target + "/find",
-		listUrl : App.contextPath + "/json/" + target + "/list",
+		saveUrl: App.contextPath + "/rest/" + target + "/save",
+		deleteUrl: App.contextPath + "/rest/" + target + "/delete",
+		findUrl: App.contextPath + "/rest/" + target + "/find",
+		listUrl : App.contextPath + "/rest/" + target + "/list",
 		showAddForm: function() {
 			$("#dataModelTitle").html("Add News");
 			$("input[name=txtId]").val("-1");
@@ -180,6 +180,7 @@ Select by category <select name="selFilterCategory">
 						(typeof data[i].dateTime == 'undefined' || data[i].dateTime <= 0)
 								? ""
 								: new Date(data[i].dateTime).customFormat("#DD#/#MM#/#YYYY#");
+				data[i].newsmlg2 = "<a href='<%=request.getContextPath()%>/rest/news/newsmlg2/" + data[i].id + "' target='_blank'>NewsML-G2 format</a>";
 			}
 			return data;
 		},
@@ -187,7 +188,7 @@ Select by category <select name="selFilterCategory">
 			$('select[name=selFilterCategory]').on('change', function (e) {
 				var optionSelected = $("option:selected", this);
 				var valueSelected = this.value;
-				TableData.listUrl = App.contextPath + "/json/" + target + "/findByCategory?id=" + valueSelected;
+				TableData.listUrl = App.contextPath + "/rest/" + target + "/findByCategory?id=" + valueSelected;
 				App.loadTableData();
 			});
 
@@ -217,6 +218,7 @@ Select by category <select name="selFilterCategory">
 			{data: "source", title: "Source"},
 			{data: "location", title: "Location"},
 			{data : "strDateTime", title: "Updated Date"},
+			{data : "newsmlg2", title: "NewsML-G2"},
 			{data: "command", title: ""}
 		]
 	}

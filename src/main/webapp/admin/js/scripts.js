@@ -79,7 +79,7 @@ $(document).ready(function() {
     }
     
     App.loadTableData = function() {
-	    if (typeof TableData != 'undefined') {
+	    if (typeof TableData != 'undefined' && typeof TableData.listUrl != 'undefined' && $('#tableContainer').length > 0) {
 		    $.ajax({
 		        type: "GET",
 		        url: TableData.listUrl,

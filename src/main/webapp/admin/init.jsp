@@ -10,10 +10,5 @@
         user.setLastName("TTXVN");
         user.setGender(true);
         userService.save(user);
-        %>Done<%
-    } else {
-        %>
-    Skip
-<%
     }
 %>

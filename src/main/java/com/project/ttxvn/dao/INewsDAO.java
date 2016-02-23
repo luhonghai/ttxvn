@@ -12,4 +12,6 @@ import java.util.List;
 public interface INewsDAO extends IBaseDAO<News>{
 
     List<News> findByCategoryId(long id);
+
+    int countByCategoryId(long id);
 }

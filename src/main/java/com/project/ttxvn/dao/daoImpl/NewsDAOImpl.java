@@ -3,7 +3,6 @@ package com.project.ttxvn.dao.daoImpl;
 import com.project.ttxvn.dao.BaseDAO;
 import com.project.ttxvn.dao.INewsDAO;
 import com.project.ttxvn.model.News;
-import com.project.ttxvn.model.User;
 
 import javax.ejb.Stateless;
 import java.util.List;
@@ -24,5 +23,13 @@ public class NewsDAOImpl extends BaseDAO<News> implements INewsDAO {
                         + "WHERE n.catId=:cId", News.class)
                 .setParameter("cId", id)
                 .getResultList();
+    }
+
+    public int countByCategoryId(long id) {
+        return Integer.parseInt(getEntityManager()
+                .createQuery("SELECT COUNT(n) from " + News.class.getName() + " n "
+                        + "WHERE n.catId=:cId")
+                .setParameter("cId", id)
+                .getSingleResult().toString());
     }
 }

@@ -1,9 +1,6 @@
 package com.project.ttxvn.model;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 /**
  * Created by longdnguyen on 2/21/16.
@@ -20,6 +17,9 @@ public class Category implements IBaseEntity {
 
     @Column(name = "description")
     private String description;
+
+    @Transient
+    private int newsCount;
 
     public long getId() {
         return id;
@@ -66,5 +66,13 @@ public class Category implements IBaseEntity {
         result = 31 * result + (title != null ? title.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
         return (int)result;
+    }
+
+    public int getNewsCount() {
+        return newsCount;
+    }
+
+    public void setNewsCount(int newsCount) {
+        this.newsCount = newsCount;
     }
 }

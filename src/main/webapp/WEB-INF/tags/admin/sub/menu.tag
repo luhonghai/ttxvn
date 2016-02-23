@@ -19,7 +19,7 @@
 			</ul>
 		</li>
 		<li class="nav-header"><a href="#" data-toggle="collapse"
-								  data-target="#userMenu">
+								  data-target="#categoryMenu">
 			<h5>
 				News management <i class="glyphicon glyphicon-chevron-down"></i>
 			</h5>

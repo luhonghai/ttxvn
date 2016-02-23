@@ -56,10 +56,10 @@
 <script>
 	var target = "category";
 	var TableData = {
-		saveUrl: App.contextPath + "/json/" + target + "/save",
-		deleteUrl: App.contextPath + "/json/" + target + "/delete",
-		findUrl: App.contextPath + "/json/" + target + "/find",
-		listUrl : App.contextPath + "/json/" + target + "/list",
+		saveUrl: App.contextPath + "/rest/" + target + "/save",
+		deleteUrl: App.contextPath + "/rest/" + target + "/delete",
+		findUrl: App.contextPath + "/rest/" + target + "/find",
+		listUrl : App.contextPath + "/rest/" + target + "/list",
 		showAddForm: function() {
 			$("#dataModelTitle").html("Add category");
 			$("input[name=txtId]").val("-1");
@@ -89,6 +89,11 @@
 			return obj;
 		},
 		processData: function(data) {
+			if (data.length == 0) return data;
+			var i;
+			for (i = 0; i < data.length; i++) {
+				data[i].newsmlg2 = "<a href='<%=request.getContextPath()%>/rest/news/newsmlg2/category/" + data[i].id + "' target='_blank'>NewsML-G2 format</a>";
+			}
 			return data;
 		},
 		name : "Category",
@@ -96,6 +101,8 @@
 			{data: "id", title: "ID"},
 			{data: "title", title: "Title"},
 			{data: "description", title: "Description"},
+			{data: "newsCount", title: "News count"},
+			{data : "newsmlg2", title: "NewsML-G2"},
 			{data: "command", title: ""}
 		]
 	}
