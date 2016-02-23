@@ -1,24 +1,31 @@
+<%@ tag import="com.project.ttxvn.model.User" %>
 <%@tag description="User management" pageEncoding="UTF-8" %>
 <%
 	String mRole = request.getParameter("role");
-	int role = 0;
+	User user = (User) session.getAttribute("admin");
+	int nRole = 0;
 	if (mRole != null) {
-		 role = Integer.parseInt(mRole);
+		nRole = Integer.parseInt(mRole);
 	}
+	User.Role role = User.Role.fromId(nRole);
 %>
-<a href=""><strong><i
-		class="glyphicon glyphicon-user"></i><%=role == 0 ? "Staff" : "Customer" %>  management</strong></a>
+<script>
+	var currentUser = "<%=user.getEmail()%>";
+</script>
+<a href=""><h1><%=role.toString()%>  management</h1></a>
 	<hr>
 	<div class="row">
 		<div class="col-md-12">
 				<!-- Button trigger modal -->
 			<button type="button" class="btn btn-primary btn-add table-action">
-				<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add new <%=role == 0 ? "Staff" : "Customer" %>
+				<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add new <%=role.toString()%>
 			</button>
+			<hr>
 			 <div class="table-responsive" id="tableContainer">
 			</div>
 		</div>
 	</div>
+
 <!-- Modal -->
 <div class="modal fade" id="dataModal" tabindex="-1" role="dialog"
 	aria-labelledby="myModalLabel" aria-hidden="true">
@@ -111,7 +118,7 @@
 			saveUrl: App.contextPath + "/json/user/save",
 			deleteUrl: App.contextPath + "/json/user/delete",
 			findUrl: App.contextPath + "/json/user/find",
-			listUrl : App.contextPath + "/json/user/findbyrole?role=<%=role%>",
+			listUrl : App.contextPath + "/json/user/findbyrole?role=<%=role.getId()%>",
 			showAddForm: function() {
 				$("#dataModelTitle").html("Add customer");
 				$("input[name=txtId]").val("-1");
@@ -176,7 +183,10 @@
 					data[i].strDob = 
 						(typeof data[i].dob == 'undefined' || data[i].dob <= 0) 
 							? "" 
-							: new Date(data[i].dob).customFormat("#DD#/#MM#/#YYYY#");		
+							: new Date(data[i].dob).customFormat("#DD#/#MM#/#YYYY#");
+					if (data.email == currentUser) {
+						data.skipDelete = true;
+					}
 				}
 				return data;
 			},

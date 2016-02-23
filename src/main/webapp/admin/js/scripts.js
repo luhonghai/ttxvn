@@ -57,14 +57,21 @@ $(document).ready(function() {
     	var i;
     	for (i = 0; i < data.length; i++) {
 	        var btnCommands = [];
-	        btnCommands.push('<div class="table-action-group"><button type="button" item-id="' + data[i].id + '" class="btn btn-warning table-action btn-edit btn-xs">');
-	        btnCommands.push('<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>');
-	        btnCommands.push('Edit');
-	        btnCommands.push('</button>');
-	        btnCommands.push('<button type="button" item-id="' + data[i].id + '" class="btn btn-danger table-action btn-delete btn-xs">');
-	        btnCommands.push('<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>');
-	        btnCommands.push('Delete');
-	        btnCommands.push('</button></div>');
+
+	        btnCommands.push('<div class="table-action-group">');
+			if (!data[i].skipEdit) {
+				btnCommands.push('<button type="button" item-id="' + data[i].id + '" class="btn btn-warning table-action btn-edit btn-xs">');
+				btnCommands.push('<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>');
+				btnCommands.push('Edit');
+				btnCommands.push('</button>');
+			}
+			if (!data[i].skipDelete) {
+				btnCommands.push('<button type="button" item-id="' + data[i].id + '" class="btn btn-danger table-action btn-delete btn-xs">');
+				btnCommands.push('<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>');
+				btnCommands.push('Delete');
+				btnCommands.push('</button>');
+			}
+			btnCommands.push('</div>');
 	
 	        data[i].command = btnCommands.join("");
     	}

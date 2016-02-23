@@ -22,6 +22,10 @@ public abstract class BaseService<B, T, K> {
 	protected IBaseDAO<B> getBean() {
 		return bean;
 	}
+
+	protected T getIBean() {
+		return (T) bean;
+	}
 	
 	public List<B> findAll() {
 		try {

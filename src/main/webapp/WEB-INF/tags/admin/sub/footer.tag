@@ -9,5 +9,6 @@
 <script src="<%=request.getContextPath() %>/admin/js/dataTables.bootstrap.js"></script>
 <script src="<%=request.getContextPath() %>/admin/js/sweet-alert.js"></script>
 <script src="<%=request.getContextPath() %>/admin/js/handlebars-v3.0.0.js"></script>
-
+<script src="<%=request.getContextPath() %>/js/tinymce/jquery.tinymce.min.js"></script>
+<script src="<%=request.getContextPath() %>/js/tinymce/tinymce.min.js"></script>
 <script src="<%=request.getContextPath() %>/admin/js/scripts.js"></script>

@@ -13,12 +13,15 @@ public class User implements IBaseEntity {
 	private static final long serialVersionUID = 5707592087976014522L;
 
 	public enum Role {
-		ADMINISTRATOR(0),
-		AUTHOR(1)
+		ADMINISTRATOR(0, "Administrator"),
+		EDITOR(1, "Editor"),
+		REPORTER(2, "Reporter")
 		;
 		int id;
-		Role(int id) {
+		String name;
+		Role(int id, String name) {
 			this.id = id;
+			this.name = name;
 		}
 
 		public int getId() {
@@ -31,7 +34,12 @@ public class User implements IBaseEntity {
 					return r;
 				}
 			}
-			return null;
+			return REPORTER;
+		}
+
+		@Override
+		public String toString() {
+			return name;
 		}
 	}
 	

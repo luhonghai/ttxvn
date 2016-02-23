@@ -3,7 +3,8 @@ package com.project.ttxvn.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import java.sql.Date;
+import javax.persistence.Transient;
+import java.util.Date;
 
 /**
  * Created by longdnguyen on 2/21/16.
@@ -36,8 +37,10 @@ public class News implements IBaseEntity {
     private String location;
 
     @Column(name = "cat_id")
-    private int catId;
+    private long catId;
 
+    @Transient
+    private Category category;
 
     public long getId() {
         return id;
@@ -103,11 +106,11 @@ public class News implements IBaseEntity {
         this.location = location;
     }
 
-    public int getCatId() {
+    public long getCatId() {
         return catId;
     }
 
-    public void setCatId(int catId) {
+    public void setCatId(long catId) {
         this.catId = catId;
     }
 
@@ -133,7 +136,7 @@ public class News implements IBaseEntity {
 
     @Override
     public int hashCode() {
-        int result = (int) id;
+        long result = id;
         result = 31 * result + (title != null ? title.hashCode() : 0);
         result = 31 * result + (dateTime != null ? dateTime.hashCode() : 0);
         result = 31 * result + (content != null ? content.hashCode() : 0);
@@ -142,6 +145,14 @@ public class News implements IBaseEntity {
         result = 31 * result + (source != null ? source.hashCode() : 0);
         result = 31 * result + (location != null ? location.hashCode() : 0);
         result = 31 * result + catId;
-        return result;
+        return (int) result;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 }

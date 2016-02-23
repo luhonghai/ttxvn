@@ -9,6 +9,6 @@
 		 index = 2;
 	}
 %>
-<t:main pageTitle="Customer management" index="<%=Integer.toString(index) %>">
+<t:main pageTitle="User management" index="<%=Integer.toString(index) %>">
 	<c:user-management></c:user-management>
 </t:main>

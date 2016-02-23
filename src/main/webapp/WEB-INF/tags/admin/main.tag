@@ -7,7 +7,7 @@
 	User user = (User) session.getAttribute("admin");
  	if (user == null) {
  		response.sendRedirect(request.getContextPath() + "/admin/login.jsp");
- 	}
+ 	} else {
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -31,3 +31,4 @@
 </body>
 </html>
 
+<%}%>
