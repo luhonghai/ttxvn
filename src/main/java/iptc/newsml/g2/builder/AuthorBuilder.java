@@ -39,6 +39,8 @@ public class AuthorBuilder
     private String jobTitle;
     private String jobTitleUri;
 
+    private String name;
+
     /**
      * Static factory method for Author
      */
@@ -132,6 +134,17 @@ public class AuthorBuilder
         obj.setRoleUri(roleUri);
         obj.setJobTitle(jobTitle);
         obj.setJobTitleUri(jobTitleUri);
+        obj.setName(name);
         return obj;
+    }
+
+
+    public String getName() {
+        return name;
+    }
+
+    public AuthorBuilder name(String name) {
+        this.name = name;
+        return this;
     }
 }

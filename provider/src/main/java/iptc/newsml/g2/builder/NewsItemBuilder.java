@@ -45,6 +45,8 @@ public class NewsItemBuilder extends AnyItemBuilder
 
     private ContentMetaBuilder contentMeta;
 
+    private NewsItem.ContentSet contentSet;
+
     /**
      * Static factory method for NewsItem
      */
@@ -66,6 +68,11 @@ public class NewsItemBuilder extends AnyItemBuilder
     public NewsItemBuilder standard(String val)
     {
         this.standard = val;
+        return this;
+    }
+
+    public NewsItemBuilder contentSet(NewsItem.ContentSet contentSet) {
+        this.contentSet = contentSet;
         return this;
     }
 
@@ -178,7 +185,7 @@ public class NewsItemBuilder extends AnyItemBuilder
         obj.setGuid(guid);
         obj.setLang(lang);
         obj.setDir(dir);
-
+        obj.setContentSet(contentSet);
         return obj;
     }
 }

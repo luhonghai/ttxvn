@@ -6,13 +6,13 @@ import com.project.ttxvn.model.News;
 import iptc.newsml.g2.builder.ContentMetaBuilder;
 import iptc.newsml.g2.builder.ItemMetaBuilder;
 import iptc.newsml.g2.builder.NewsItemBuilder;
+import iptc.newsml.g2.model.Name;
 import iptc.newsml.g2.model.NewsItem;
+import iptc.newsml.g2.model.Subject;
 
 import javax.ws.rs.*;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.lang.reflect.Array;
+import java.util.*;
 
 import static iptc.common.builder.CalendarBuilder.calendar;
 import static iptc.newsml.g2.builder.AuthorBuilder.contributor;
@@ -161,31 +161,47 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> {
 
         itemMeta.embargoed(calendar().rawDate(news.getDateTime()));
         itemMeta.pubStatus(qcode().pubStatusUsable());
-        itemMeta.service(qcode().qcode("srv:finance"));
-        // TODO add support edNote
-        // TODO add support signal
-        // TODO add support link
+        //itemMeta.service(qcode().qcode("srv:finance"));
+
         newsItem.itemMeta(itemMeta);
 
         ContentMetaBuilder contentMetadata = contentMetadata();
         contentMetadata.contentCreated(calendar().rawDate(news.getDateTime()));
         contentMetadata.contentModified(calendar().rawDate(news.getDateTime()));
+        if (news.getLocation() != null && news.getLocation().length() > 0) {
+            Subject subject = new Subject();
+            Set<Name> setName = new HashSet<>();
+            Name name = new Name();
+            name.setValue(news.getLocation());
+            setName.add(name);
+            subject.setName(setName);
+            contentMetadata.located(subject);
+        }
+        if (news.getSource() != null && news.getSource().length() > 0) {
+            Subject subject = new Subject();
+            Set<Name> setName = new HashSet<>();
+            Name name = new Name();
+            name.setValue(news.getSource());
+            setName.add(name);
+            subject.setName(setName);
+            contentMetadata.infoSource(subject);
+        }
         contentMetadata.urgency(2);
-        contentMetadata.creator(creator().uri("http://www.ttxvn.com/staff/" + news.getAuthor()));
-        contentMetadata.contributor(contributor().uri("http://www.ttxvn.com/staff/" + news.getAuthor()));
+        contentMetadata.creator(creator().name(news.getAuthor()).uri("http://www.ttxvn.com/staff/" + news.getAuthor()));
+        //contentMetadata.contributor(contributor().name(news.getAuthor()).uri("http://www.ttxvn.com/staff/" + news.getAuthor()));
         // <infoSource uri="http://www.example.com" />
         contentMetadata.addSubject(subject().type("cpnat:abstract").qcode("medtop:04000000")
                 .addName(name().lang("vi").role("nrol:full").value(news.getTitle())).addBroader(broader().qcode("medtop:04000000")));
 
-        // TODO add support <genre qcode="genre:interview">
-        //contentMetadata.slugline(slugline().value("US-Finance"));
-
-        // FIXME blocked by: @XmlValue is not allowed on a class that derives
-        // another class. See Headline.java
         contentMetadata.headline(headline().value(news.getTitle()));
 
         newsItem.contentMeta(contentMetadata);
 
+        NewsItem.ContentSet contentSet = new NewsItem.ContentSet();
+        final NewsItem.ContentSetBody body = contentSet.getInlineXML().getNitf().getBody();
+        body.setContent(news.getContent());
+        body.getHead().getHeadline().setHl1(news.getTitle());
+        newsItem.contentSet(contentSet);
         try {
             return newsItem.build();
         } catch (Exception e) {

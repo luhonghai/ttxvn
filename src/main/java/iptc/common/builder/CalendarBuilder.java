@@ -39,6 +39,7 @@ public class CalendarBuilder
     private String time;
     private TimeZone tz;
     private Locale locale;
+    private Date rawDate;
 
     public CalendarBuilder()
     {
@@ -75,32 +76,39 @@ public class CalendarBuilder
 
     public Calendar build() throws Exception
     {
-        if (locale == null)
-        {
-            locale = Locale.getDefault();
+        if (rawDate == null) {
+            if (locale == null) {
+                locale = Locale.getDefault();
+            }
+
+            if (tz == null) {
+                tz = TimeZone.getDefault();
+            }
+
+            Calendar cal = Calendar.getInstance(tz, locale);
+
+            SimpleDateFormat sdf = new SimpleDateFormat("YYYY-DD-MM HH:mm:ss", locale);
+            sdf.setTimeZone(tz);
+
+            if (time == null) {
+                time = "00:00:00";
+            }
+
+            if (date != null && time != null) {
+                Date d = sdf.parse(date + " " + time);
+                cal.setTime(d);
+            }
+            return cal;
+        } else {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(rawDate);
+            return calendar;
         }
 
-        if (tz == null)
-        {
-            tz = TimeZone.getDefault();
-        }
+    }
 
-        Calendar cal = Calendar.getInstance(tz, locale);
-
-        SimpleDateFormat sdf = new SimpleDateFormat("YYYY-DD-MM HH:mm:ss", locale);
-        sdf.setTimeZone(tz);
-
-        if (time == null)
-        {
-            time = "00:00:00";
-        }
-
-        if (date != null && time != null)
-        {
-            Date d = sdf.parse(date + " " + time);
-            cal.setTime(d);
-        }
-
-        return cal;
+    public CalendarBuilder rawDate(Date rawDate) {
+        this.rawDate = rawDate;
+        return this;
     }
 }

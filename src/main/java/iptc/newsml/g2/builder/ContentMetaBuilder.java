@@ -22,6 +22,7 @@ package iptc.newsml.g2.builder;
 
 import iptc.common.builder.CalendarBuilder;
 import iptc.newsml.g2.model.ContentMeta;
+import iptc.newsml.g2.model.Subject;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -45,6 +46,8 @@ public class ContentMetaBuilder
     private HeadlineBuilder headline;
     private Set<KeywordBuilder> keyword = new LinkedHashSet<KeywordBuilder>();
 
+    private Subject located;
+    private Subject infoSource;
     /**
      * Static factory method for ContentMetadata
      */
@@ -206,7 +209,26 @@ public class ContentMetaBuilder
                 obj.getKeyword().add(item.build());
             }
         }
-
+        obj.setLocated(located);
+        obj.setInfoSource(infoSource);
         return obj;
+    }
+
+    public Subject getLocated() {
+        return located;
+    }
+
+    public ContentMetaBuilder located(Subject located) {
+        this.located = located;
+        return this;
+    }
+
+    public Subject getInfoSource() {
+        return infoSource;
+    }
+
+    public ContentMetaBuilder infoSource(Subject infoSource) {
+        this.infoSource = infoSource;
+        return this;
     }
 }

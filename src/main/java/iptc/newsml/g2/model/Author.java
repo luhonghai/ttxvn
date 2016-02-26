@@ -24,6 +24,7 @@ package iptc.newsml.g2.model;
 import java.io.Serializable;
 import java.lang.Cloneable;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 
 /**
  * Author Model Object
@@ -44,6 +45,8 @@ public class Author implements Serializable, Cloneable
     private String jobTitle;
 
     private String jobTitleUri;
+
+    private String name;
 
     public Author()
     {
@@ -102,5 +105,14 @@ public class Author implements Serializable, Cloneable
     public void setJobTitleUri(String jobTitleUri)
     {
         this.jobTitleUri = jobTitleUri;
+    }
+
+    @XmlElement
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

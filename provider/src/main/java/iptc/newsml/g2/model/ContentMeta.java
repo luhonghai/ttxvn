@@ -26,6 +26,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -37,11 +38,13 @@ import javax.xml.bind.annotation.XmlType;
  */
 
 @XmlType(propOrder =
-{ "urgency", "contentCreated", "contentModified", "keyword", "creator", "contributor", "subject", "slugline", "headline" })
+{ "urgency", "contentCreated", "contentModified", "keyword", "creator", "contributor", "located", "infoSource", "subject", "slugline", "headline" })
 // TODO add support
 // "language", "subject", "description", "", "", "", ""
 public class ContentMeta implements Serializable, Cloneable
 {
+
+
     private static final long serialVersionUID = 1L;
 
     private Integer urgency;
@@ -64,6 +67,11 @@ public class ContentMeta implements Serializable, Cloneable
 
     @NotNull
     private Set<Keyword> keyword = new LinkedHashSet<Keyword>();
+
+    private Subject located;
+
+    private Subject infoSource;
+
 
     public ContentMeta()
     {
@@ -168,5 +176,24 @@ public class ContentMeta implements Serializable, Cloneable
     {
         this.keyword = keyword;
 
+    }
+
+    @XmlElement
+    public Subject getLocated() {
+        return located;
+    }
+
+    public void setLocated(Subject located) {
+        this.located = located;
+    }
+
+
+    @XmlElement
+    public Subject getInfoSource() {
+        return infoSource;
+    }
+
+    public void setInfoSource(Subject infoSource) {
+        this.infoSource = infoSource;
     }
 }
