@@ -141,12 +141,12 @@ public class NewsItem extends AnyItem
 
         private ContentSetHead head = new ContentSetHead();
 
-
         private String content;
 
 
         @XmlElement(name = "body.content")
         public String getContent() {
+            if (content == null) return "";
             return content;
         }
 
@@ -186,6 +186,7 @@ public class NewsItem extends AnyItem
 
         @XmlElement
         public String getHl1() {
+            if (hl1 == null) return "";
             return hl1;
         }
 

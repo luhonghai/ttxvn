@@ -59,7 +59,7 @@ public class Name implements Serializable, Cloneable
     }
 
     @XmlAttribute(namespace = "http://www.w3.org/XML/1998/namespace")
-    private String getLang()
+    public String getLang()
     {
         return lang;
     }
@@ -70,7 +70,7 @@ public class Name implements Serializable, Cloneable
     }
 
     @XmlElement()
-    private String getValue()
+    public String getValue()
     {
         return value;
     }

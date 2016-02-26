@@ -2,8 +2,12 @@
 <%@ tag import="com.project.ttxvn.model.Category" %>
 <%@ tag import="java.util.List" %>
 <%@ tag import="com.project.ttxvn.model.User" %>
+<%@ tag import="com.project.ttxvn.service.UserService" %>
+<%@ tag import="com.project.ttxvn.service.NewsService" %>
 <%@tag description="User management" pageEncoding="UTF-8" %>
 <%
+	NewsService newsService = new NewsService();
+	newsService.fetchNewsFromProvider();
 	User user = (User) session.getAttribute("admin");
 	CategoryService categoryService = new CategoryService();
 	List<Category> categoryList = categoryService.findAll();
@@ -29,9 +33,16 @@ Select by category <select name="selFilterCategory">
 <div class="row">
 	<div class="col-md-12">
 		<!-- Button trigger modal -->
-		<button type="button" class="btn btn-primary btn-add table-action">
-			<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Add News
+		<button type="button" class="btn btn-primary btn-send table-action">
+			<span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Send News request
 		</button>
+		<hr>
+		<button type="button" class="btn btn-primary btn-import table-action">
+			<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Import NewsML-G2
+		</button>
+		<div class="col-xs-6">
+			<input type="text" class="form-control" id="txtImport" placeholder="NewsML-G2 URL"/>
+		</div>
 		<hr>
 		<div class="table-responsive" id="tableContainer">
 		</div>
@@ -104,6 +115,40 @@ Select by category <select name="selFilterCategory">
 		</div>
 	</div>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="dataModalSend"  tabindex="-1" role="dialog"
+	 aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog" style="width: 800px">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">
+					<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+				</button>
+				<h4 class="modal-title">Send News request</h4>
+			</div>
+			<div class="modal-body" style="padding: 10px">
+				<form class="form-horizontal" role="form">
+					<div class="form-group">
+						<div class="col-xs-8">
+							<input type="text" class="form-control" placeholder="Email" name="txtEmail" id="txtEmail"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-xs-12">
+							<textarea name="txtMessage" id="txtMessage" style="width: 100%" placeholder="Message"></textarea>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary btn-send-request"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Send</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <script>
 	var target = "news";
 	var TableData = {
@@ -192,11 +237,66 @@ Select by category <select name="selFilterCategory">
 				App.loadTableData();
 			});
 
+			$('body').on('click', '.btn-send', function() {
+				$("#txtEmail").val("");
+				$("#txtMessage").val("");
+				$("#dataModalSend").modal("show");
+			});
+
+			$('body').on('click', '.btn-send-request', function() {
+				$.ajax({
+					type: "GET",
+					url: App.contextPath + "/rest/" + target + "/send/request",
+					contentType: "application/json",
+					dataType: "json",
+					data: {
+						email: $("#txtEmail").val(),
+						message: $("#txtMessage").val()
+					}
+				}).done(function( data ) {
+					if (data)
+					{
+						swal("Send request successfully!", "", "success");
+					} else {
+						swal("Error!", "Could not complete", "warning");
+					}
+					$("#dataModalSend").modal("hide");
+				}).error(function() {
+					swal("Error!", "Could not complete", "warning");
+					$("#dataModalSend").modal("hide");
+				});
+			});
+
+			$('body').on('click', '.btn-import', function() {
+				$.ajax({
+					type: "GET",
+					url: App.contextPath + "/rest/" + target + "/import/newsmlg2",
+					contentType: "application/json",
+					dataType: "json",
+					data: {
+						dataUrl: $("#txtImport").val()
+					}
+				}).done(function( data ) {
+					if (data)
+					{
+						swal("Import successfully!", "", "success");
+						$("#txtImport").val("")
+						App.loadTableData()
+					} else {
+						swal("Error!", "Could not complete", "warning");
+					}
+
+				}).error(function() {
+					swal("Error!", "Could not complete", "warning");
+
+				});
+			});
+
 			$('#dataModal').on('shown.bs.modal', function () {
 				console.log("init tinymce");
 				tinymce.init({
 					selector:"textarea[name=taContent]",
-						height: 400,
+						height: 250,
 						theme: 'modern',
 						plugins: [
 					'advlist autolink lists link image charmap print preview hr anchor pagebreak',
@@ -218,7 +318,7 @@ Select by category <select name="selFilterCategory">
 			{data: "source", title: "Source"},
 			{data: "location", title: "Location"},
 			{data : "strDateTime", title: "Updated Date"},
-			{data : "newsmlg2", title: "NewsML-G2"},
+//			{data : "newsmlg2", title: "NewsML-G2"},
 			{data: "command", title: ""}
 		]
 	}

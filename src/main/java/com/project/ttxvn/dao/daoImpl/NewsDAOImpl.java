@@ -3,8 +3,10 @@ package com.project.ttxvn.dao.daoImpl;
 import com.project.ttxvn.dao.BaseDAO;
 import com.project.ttxvn.dao.INewsDAO;
 import com.project.ttxvn.model.News;
+import com.project.ttxvn.model.User;
 
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
 import java.util.List;
 
 /**
@@ -31,5 +33,20 @@ public class NewsDAOImpl extends BaseDAO<News> implements INewsDAO {
                         + "WHERE n.catId=:cId")
                 .setParameter("cId", id)
                 .getSingleResult().toString());
+    }
+
+    @Override
+    public News findByUUID(String uuid) {
+        try {
+            return getEntityManager()
+                    .createQuery("SELECT u from " + News.class.getName() + " u "
+                            +"WHERE u.uuid=:ud", News.class)
+                    .setParameter("ud", uuid)
+                    .setFirstResult(0)
+                    .setMaxResults(1)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 }

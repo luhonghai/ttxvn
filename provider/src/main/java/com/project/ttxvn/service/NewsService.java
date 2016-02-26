@@ -11,21 +11,18 @@ import iptc.newsml.g2.model.NewsItem;
 import iptc.newsml.g2.model.Subject;
 
 import javax.ws.rs.*;
-import java.lang.reflect.Array;
 import java.util.*;
 
 import static iptc.common.builder.CalendarBuilder.calendar;
-import static iptc.newsml.g2.builder.AuthorBuilder.contributor;
 import static iptc.newsml.g2.builder.AuthorBuilder.creator;
 import static iptc.newsml.g2.builder.CatalogRefBuilder.catalogRef;
 import static iptc.newsml.g2.builder.ContentMetaBuilder.contentMetadata;
+import static iptc.newsml.g2.builder.HeadlineBuilder.headline;
 import static iptc.newsml.g2.builder.ItemMetaBuilder.itemMeta;
 import static iptc.newsml.g2.builder.NameBuilder.name;
 import static iptc.newsml.g2.builder.NewsItemBuilder.newsItem;
 import static iptc.newsml.g2.builder.QcodeBuilder.qcode;
 import static iptc.newsml.g2.builder.RelationBuilder.broader;
-import static iptc.newsml.g2.builder.SluglineBuilder.slugline;
-import static iptc.newsml.g2.builder.HeadlineBuilder.headline;
 import static iptc.newsml.g2.builder.SubjectBuilder.subject;
 
 /**
@@ -62,6 +59,9 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> {
             tmp.setDateTime(new Date(System.currentTimeMillis()));
             tmp.setTitle(obj.getTitle());
             tmp.setImage(obj.getImage());
+            tmp.setLocation(obj.getLocation());
+            tmp.setSource(obj.getSource());
+            tmp.setAuthor(obj.getAuthor());
             return getBean().edit(tmp);
         } else {
             obj.setDateTime(new Date(System.currentTimeMillis()));

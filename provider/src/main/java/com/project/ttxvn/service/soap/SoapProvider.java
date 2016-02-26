@@ -1,5 +1,6 @@
 package com.project.ttxvn.service.soap;
 
+import com.project.ttxvn.model.News;
 import com.project.ttxvn.model.NewsRequest;
 import com.project.ttxvn.service.NewsRequestService;
 import com.project.ttxvn.service.NewsService;
@@ -33,5 +34,17 @@ public class SoapProvider implements ISoapProvider {
     public List<NewsItem> findNewsItemByCategory(long categoryId) {
         NewsService newsService = new NewsService();
         return newsService.findNewsmlG2ByCategoryId(categoryId);
+    }
+
+    @Override
+    public List<News> findNews() {
+        NewsService newsService = new NewsService();
+        return newsService.findAll();
+    }
+
+    @Override
+    public List<News> findNewsByCategory(long categoryId) {
+        NewsService newsService = new NewsService();
+        return newsService.findByCategory(categoryId);
     }
 }

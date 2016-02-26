@@ -5,8 +5,11 @@ import com.project.ttxvn.model.IBaseEntity;
 import com.project.ttxvn.utils.EJBConnector;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 public abstract class BaseService<B, T, K> {
+
+	protected Logger logger = Logger.getLogger(this.getClass().getName());
 
 	private final IBaseDAO<B> bean;
 

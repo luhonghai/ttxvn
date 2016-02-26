@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlElement;
  * @see <a
  *      href="http://www.iptc.org/std/NewsML-G2/2.19/specification/XML-Schema-Doc-Power/Relation.html">Relation</a>
  */
-public abstract class Relation implements Serializable, Cloneable
+public class Relation implements Serializable, Cloneable
 {
     private static final long serialVersionUID = 1L;
 

@@ -10,4 +10,10 @@ public class Common {
     public static final String LOGIN = "login";
     public static final String FIND_BY_EMAIL = "findByEmail";
 
+    public static final String REMOTE_SOAP = "http://localhost:8180/ttxvn/SoapProvider?wsdl";
+
+    public static final String REMOTE_SOAP_SERVICE_URI = "http://soap.service.ttxvn.project.com/";
+
+    public static final String REMOTE_SOAP_SERVICE_NAME = "SoapProviderService";
+
 }

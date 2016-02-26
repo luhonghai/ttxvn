@@ -56,13 +56,15 @@ CREATE TABLE IF NOT EXISTS `user` (
 CREATE TABLE `news` (
   `id` int(11) NOT NULL,
   `title` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `uuid` text CHARACTER SET utf8 COLLATE utf8_bin,
   `date_time` date NOT NULL,
   `content` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `image` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `author` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `source` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `location` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-  `cat_id` int(11) NOT NULL
+  `cat_id` int(11) NOT NULL,
+  `status` int(11)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 --
@@ -102,3 +104,4 @@ ALTER TABLE `category`
 --
 ALTER TABLE `news`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+

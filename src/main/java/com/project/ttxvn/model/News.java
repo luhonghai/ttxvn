@@ -11,9 +11,39 @@ import java.util.Date;
  */
 @Entity
 public class News implements IBaseEntity {
+
+
+    public enum Status {
+        PENDING(0, "Pending"),
+        PREVIEW(1, "Preview"),
+        APPROVED(2, "Approved")
+        ;
+        int id;
+        String name;
+        Status(int id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        public static Status fromId(int id) {
+            for (Status status: values()) {
+                if (status.id == id) return status;
+            }
+            return PENDING;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
+
     @Id
     @Column(name = "id")
     private long id;
+
+    @Column
+    private String uuid;
 
     @Column(name = "title")
     private String title;
@@ -38,6 +68,9 @@ public class News implements IBaseEntity {
 
     @Column(name = "cat_id")
     private long catId;
+
+    @Column()
+    private int status = 0;
 
     @Transient
     private Category category;
@@ -154,5 +187,30 @@ public class News implements IBaseEntity {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public void setStatusEnum(Status status) {
+        this.status = status.id;
+    }
+
+    public Status getStatusEnum() {
+        return Status.fromId(status);
+    }
+
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 }
