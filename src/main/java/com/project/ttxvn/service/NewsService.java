@@ -186,7 +186,7 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> {
         try {
             String source = IOUtils.toString(new URL(url), "UTF-8");
             logger.info("Source: " + source);
-            NewsItem newsItem = (NewsItem) NewsMLG2.aProcessor().toModel(NewsItem.class, new StringReader(source));
+            NewsItem newsItem = NewsMLG2.aProcessor().toModel(NewsItem.class, new StringReader(source));
             logger.info("NewsItem: " + new GsonBuilder().setPrettyPrinting().create().toJson(newsItem));
             News news = new News();
             news.setTitle(newsItem.getContentMeta().getHeadline().getValue());

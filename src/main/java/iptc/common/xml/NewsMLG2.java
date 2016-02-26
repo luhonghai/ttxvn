@@ -54,14 +54,11 @@ public class NewsMLG2
         jaxbMarshaller.marshal(anyItem, writer);
     }
 
-    public AnyItem toModel(Class<?> clazz, Reader reader) throws Exception
+    public <T> T toModel(Class<T> clazz, Reader reader) throws Exception
     {
         JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
-
         Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-        AnyItem anyItem = (AnyItem) jaxbUnmarshaller.unmarshal(reader);
-
-        return anyItem;
+        return (T) jaxbUnmarshaller.unmarshal(reader);
     }
 
 }
