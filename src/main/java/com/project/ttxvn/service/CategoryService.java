@@ -35,14 +35,7 @@ public class CategoryService extends BaseService<Category, ICategoryDAO, Categor
     @Path("/save")
     @Produces("application/json")
     public Category save(Category obj) {
-        if (obj.getId() > 0) {
-            Category tmp = getBean().find(obj.getId());
-            tmp.setDescription(obj.getDescription());
-            tmp.setTitle(obj.getTitle());
-            return getBean().edit(tmp);
-        } else {
-            return super.save(obj);
-        }
+        return super.save(obj);
     }
 
     @Override

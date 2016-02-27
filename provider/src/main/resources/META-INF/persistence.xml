@@ -6,6 +6,7 @@
         <jta-data-source>java:/TTXVNP_DS</jta-data-source>
         <class>com.project.ttxvn.model.Category</class>
         <class>com.project.ttxvn.model.News</class>
+        <class>com.project.ttxvn.model.NewsRequest</class>
 
         <properties>
             <property name="showSql" value="true"/>

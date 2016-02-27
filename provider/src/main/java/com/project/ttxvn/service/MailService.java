@@ -14,9 +14,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Created by luhonghai on 5/8/15.
- */
+
 public class MailService {
 
     public  interface MessageListener {

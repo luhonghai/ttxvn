@@ -9,14 +9,15 @@ import org.apache.commons.io.FileUtils;
 
 import javax.ws.rs.*;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Created by cmg on 26/02/2016.
- */
+
 @Path("news_request")
 public class NewsRequestService extends BaseService<NewsRequest, INewsRequestDAO, NewsRequestDAOImpl> {
 
@@ -78,7 +79,7 @@ public class NewsRequestService extends BaseService<NewsRequest, INewsRequestDAO
             File tmpFolder = new File(FileUtils.getTempDirectory(), UUID.randomUUID().toString());
             tmpFolder.mkdirs();
             File tmpFile = new File(tmpFolder, "newsml-g2.xml");
-            FileWriter writer = new FileWriter(tmpFile);
+            OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(tmpFile), Charset.forName("UTF-8").newEncoder() );
             logger.info("Write file to " + tmpFile);
             NewsMLG2.aProcessor().toXml(news, writer);
             mailService.setMessageListener(new MailService.MessageListener() {

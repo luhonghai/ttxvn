@@ -25,9 +25,7 @@ import static iptc.newsml.g2.builder.QcodeBuilder.qcode;
 import static iptc.newsml.g2.builder.RelationBuilder.broader;
 import static iptc.newsml.g2.builder.SubjectBuilder.subject;
 
-/**
- * Created by longdnguyen on 2/21/16.
- */
+
 @Path("news")
 public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> {
 
