@@ -16,4 +16,6 @@ public interface INewsDAO extends IBaseDAO<News>{
     int countByCategoryId(long id);
 
     News findByUUID(String uuid);
+
+    List<News> getTop4Newest();
 }

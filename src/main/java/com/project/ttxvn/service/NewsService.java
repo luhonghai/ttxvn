@@ -104,6 +104,20 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> {
     }
 
     @GET
+    @Path("/getTop4Newest")
+    @Produces("application/json")
+    public List<News> getTop4Newest() {
+        CategoryService categoryService = new CategoryService();
+        List<News> list = getIBean().getTop4Newest();
+        if (list != null && !list.isEmpty()) {
+            for (final News item : list) {
+                item.setCategory(categoryService.find(item.getCatId()));
+            }
+        }
+        return list;
+    }
+
+    @GET
     @Path("/findByCategory")
     @Produces("application/json")
     public List<News> findByCategory(@QueryParam("id") long id) {

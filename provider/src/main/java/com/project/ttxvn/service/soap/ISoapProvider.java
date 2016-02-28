@@ -7,9 +7,6 @@ import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import java.util.List;
 
-/**
- * Created by cmg on 26/02/2016.
- */
 
 @WebService
 @SOAPBinding(style = SOAPBinding.Style.RPC)

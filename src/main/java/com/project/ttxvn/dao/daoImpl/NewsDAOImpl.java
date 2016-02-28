@@ -9,9 +9,7 @@ import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import java.util.List;
 
-/**
- * Created by longdnguyen on 2/21/16.
- */
+
 @Stateless(name = "NewsEJB")
 public class NewsDAOImpl extends BaseDAO<News> implements INewsDAO {
 
@@ -35,12 +33,20 @@ public class NewsDAOImpl extends BaseDAO<News> implements INewsDAO {
                 .getSingleResult().toString());
     }
 
+    public List<News> getTop4Newest() {
+        return getEntityManager()
+                .createQuery("SELECT n from " + News.class.getName() + " n "
+                        + "ORDER BY n.dateTime DESC", News.class)
+                .setMaxResults(4)
+                .getResultList();
+    }
+
     @Override
     public News findByUUID(String uuid) {
         try {
             return getEntityManager()
                     .createQuery("SELECT u from " + News.class.getName() + " u "
-                            +"WHERE u.uuid=:ud", News.class)
+                            + "WHERE u.uuid=:ud", News.class)
                     .setParameter("ud", uuid)
                     .setFirstResult(0)
                     .setMaxResults(1)

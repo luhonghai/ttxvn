@@ -54,6 +54,9 @@ public class News implements IBaseEntity {
     @Column(name = "content")
     private String content;
 
+    @Column(name = "description")
+    private String description;
+
     @Column(name = "image")
     private String image;
 
@@ -105,6 +108,14 @@ public class News implements IBaseEntity {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getImage() {
@@ -159,6 +170,7 @@ public class News implements IBaseEntity {
         if (title != null ? !title.equals(news.title) : news.title != null) return false;
         if (dateTime != null ? !dateTime.equals(news.dateTime) : news.dateTime != null) return false;
         if (content != null ? !content.equals(news.content) : news.content != null) return false;
+        if (description != null ? !description.equals(news.description) : news.description != null) return false;
         if (image != null ? !image.equals(news.image) : news.image != null) return false;
         if (author != null ? !author.equals(news.author) : news.author != null) return false;
         if (source != null ? !source.equals(news.source) : news.source != null) return false;
@@ -173,6 +185,7 @@ public class News implements IBaseEntity {
         result = 31 * result + (title != null ? title.hashCode() : 0);
         result = 31 * result + (dateTime != null ? dateTime.hashCode() : 0);
         result = 31 * result + (content != null ? content.hashCode() : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + (image != null ? image.hashCode() : 0);
         result = 31 * result + (author != null ? author.hashCode() : 0);
         result = 31 * result + (source != null ? source.hashCode() : 0);

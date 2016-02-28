@@ -1,9 +1,11 @@
 <%@ page pageEncoding="UTF-8" %>
 <%@ page import="com.project.ttxvn.service.NewsService" %>
+<%@ page import="com.project.ttxvn.service.FirstPageService" %>
 <%@ page import="com.project.ttxvn.model.News" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.project.ttxvn.service.CategoryService" %>
 <%@ page import="com.project.ttxvn.model.Category" %>
+<%@ page import="com.project.ttxvn.model.FirstPage" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -169,10 +171,14 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 <div class="callbacks_wrap">
                     <ul class="rslides" id="slider">
                         <%
+                            FirstPageService fService = new FirstPageService();
                             NewsService service = new NewsService();
-                            List<News> listAll = service.findAll();
+                            List<FirstPage> listF = fService.getCurrent();
+                            for(FirstPage fi:listF){
+                                News n = new News();
+                                n = service.find(fi.getNewsid());
 
-                            for (News n : listAll) { %>
+                             %>
                         <li>
                             <img src="<%=n.getImage()%>" alt="">
                             <div class="caption">
@@ -184,8 +190,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 </div>
             </div>
             <div class="articles">
-                <% CategoryService cateservice = new CategoryService();
+                <%
+                    CategoryService cateservice = new CategoryService();
                     List<Category> catelist = cateservice.getAllCategory();
+
                     for (Category ca : catelist) {
                 %>
 
@@ -450,24 +458,24 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                                 <div class="scrollbar" id="style-1">
                                     <div class="force-overflow">
                                         <div class="popular-post-grids">
-                                            <%--<%--%>
-                                                <%--List<News> listN = service.getTop4Newest();--%>
-                                                <%--for (News news : listN) { %>--%>
-                                            <%--<div class="popular-post-grid">--%>
-                                                <%--<div class="post-img">--%>
-                                                    <%--<a href="single.jsp"><img src="<%=news.getImage()%>" alt=""/></a>--%>
-                                                <%--</div>--%>
-                                                <%--<div class="post-text">--%>
-                                                    <%--<a class="pp-title" href="single.jsp"><%=news.getTitle()%>--%>
-                                                    <%--</a>--%>
-                                                    <%--<p><%=news.getDateTime()%><a class="span_link" href="#"><span--%>
-                                                            <%--class="glyphicon glyphicon-comment"></span>1 </a><a--%>
-                                                            <%--class="span_link" href="#"><span--%>
-                                                            <%--class="glyphicon glyphicon-eye-open"></span>56 </a></p>--%>
-                                                <%--</div>--%>
-                                                <%--<div class="clearfix"></div>--%>
-                                            <%--</div>--%>
-                                            <%--<%}%>--%>
+                                            <%
+                                                List<News> listN = service.getTop4Newest();
+                                                for (News news : listN) { %>
+                                            <div class="popular-post-grid">
+                                                <div class="post-img">
+                                                    <a href="single.jsp"><img src="<%=news.getImage()%>" alt=""/></a>
+                                                </div>
+                                                <div class="post-text">
+                                                    <a class="pp-title" href="single.jsp"><%=news.getTitle()%>
+                                                    </a>
+                                                    <p><%=news.getDateTime()%><a class="span_link" href="#"><span
+                                                            class="glyphicon glyphicon-comment"></span>1 </a><a
+                                                            class="span_link" href="#"><span
+                                                            class="glyphicon glyphicon-eye-open"></span>56 </a></p>
+                                                </div>
+                                                <div class="clearfix"></div>
+                                            </div>
+                                            <%}%>
                                         </div>
                                     </div>
                                 </div>

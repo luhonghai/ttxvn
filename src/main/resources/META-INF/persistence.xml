@@ -6,10 +6,15 @@
         <jta-data-source>java:/TTXVN_DS</jta-data-source>
         <class>com.project.ttxvn.model.Category</class>
         <class>com.project.ttxvn.model.News</class>
+        <class>com.project.ttxvn.model.FirstPage</class>
+        <class>com.project.ttxvn.model.User</class>
+
 
         <properties>
             <property name="showSql" value="true"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
+
+
         </properties>
     </persistence-unit>
 </persistence>

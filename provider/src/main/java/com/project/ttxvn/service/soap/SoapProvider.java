@@ -9,9 +9,7 @@ import iptc.newsml.g2.model.NewsItem;
 import javax.jws.WebService;
 import java.util.List;
 
-/**
- * Created by cmg on 26/02/2016.
- */
+
 @WebService()
 public class SoapProvider implements ISoapProvider {
 
