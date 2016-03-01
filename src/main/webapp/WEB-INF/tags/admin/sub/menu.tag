@@ -3,6 +3,7 @@
 <%@attribute name="index"%>
 
 	<ul class="list-unstyled">
+		<%%>
 		<li class="nav-header"><a href="#" data-toggle="collapse"
 			data-target="#userMenu">
 				<h5>
@@ -18,6 +19,7 @@
 						Reporter</a></li>
 			</ul>
 		</li>
+		<%%>
 		<li class="nav-header"><a href="#" data-toggle="collapse"
 								  data-target="#categoryMenu">
 			<h5>

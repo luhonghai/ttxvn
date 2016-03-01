@@ -8,11 +8,12 @@
 	User user = (User) session.getAttribute("admin");
 	CategoryService categoryService = new CategoryService();
 	List<Category> categoryList = categoryService.findAll();
+	int role = user.getRole();
 %>
 <a href=""><h1>News management</h1></a>
 <script>
 	var postAuthor = "<%=user.getEmail()%>";
-
+	var role = <%=role%>;
 	var statusList = [];
 	<%
 		for (News.Status status : News.Status.values()) {
@@ -38,11 +39,13 @@ Select by category <select name="selFilterCategory">
 <hr>
 <div class="row">
 	<div class="col-md-12">
+		<%if (user.isRole(User.Role.REPORTER)) {%>
 		<!-- Button trigger modal -->
 		<button type="button" class="btn btn-primary btn-add table-action">
 			<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Add News
 		</button>
 		<hr>
+		<%}%>
 		<div class="table-responsive" id="tableContainer">
 		</div>
 	</div>
@@ -136,7 +139,7 @@ Select by category <select name="selFilterCategory">
 		saveUrl: App.contextPath + "/rest/" + target + "/save",
 		deleteUrl: App.contextPath + "/rest/" + target + "/delete",
 		findUrl: App.contextPath + "/rest/" + target + "/find",
-		listUrl : App.contextPath + "/rest/" + target + "/list",
+		listUrl : App.contextPath + "/rest/" + target + "/list?role=" + role,
 		showAddForm: function() {
 			$("#dataModelTitle").html("Add News");
 			$("input[name=txtId]").val("-1");
@@ -207,10 +210,10 @@ Select by category <select name="selFilterCategory">
 				var statusClass = getStatusClass(status);
 				data[i].strStatus = '<a class="btn-status ' + statusClass + '" href="javascript:void(0);">' +  statusList[status] + '</a>';
 
-
 				var btnCommands = [];
 				btnCommands.push('<div class="table-action-group">');
-				if (data[i].status != <%=News.Status.APPROVED.getId()%>) {
+				if (data[i].status != <%=News.Status.APPROVED.getId()%>
+					) {
 					btnCommands.push('<button type="button" item-id="' + data[i].id + '" status-id="' + (status + 1) + '" class="btn ' + getStatusClass(status + 1) + ' table-action btn-update-status btn-xs">');
 					btnCommands.push('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>');
 					btnCommands.push(' Submit ' + statusList[status + 1]);
@@ -225,6 +228,10 @@ Select by category <select name="selFilterCategory">
 								? ""
 								: new Date(data[i].dateTime).customFormat("#DD#/#MM#/#YYYY#");
 				data[i].newsmlg2 = "<a href='<%=request.getContextPath()%>/rest/news/newsmlg2/" + data[i].id + "' target='_blank'>NewsML-G2 format</a>";
+
+				if (role == <%=User.Role.ADMINISTRATOR.getId()%>) {
+					data[i].skipEdit = true;
+				}
 			}
 			return data;
 		},
@@ -259,7 +266,7 @@ Select by category <select name="selFilterCategory">
 			$('select[name=selFilterCategory]').on('change', function (e) {
 				var optionSelected = $("option:selected", this);
 				var valueSelected = this.value;
-				TableData.listUrl = App.contextPath + "/rest/" + target + "/findByCategory?id=" + valueSelected;
+				TableData.listUrl = App.contextPath + "/rest/" + target + "/findByCategory?id=" + valueSelected + "&role=" + role;
 				App.loadTableData();
 			});
 

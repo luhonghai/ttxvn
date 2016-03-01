@@ -13,7 +13,7 @@ public class User implements IBaseEntity {
 	private static final long serialVersionUID = 5707592087976014522L;
 
 	public enum Role {
-		ADMINISTRATOR(0, "Administrator"),
+		ADMINISTRATOR(0, "Manager"),
 		EDITOR(1, "Editor"),
 		REPORTER(2, "Reporter")
 		;
@@ -159,5 +159,9 @@ public class User implements IBaseEntity {
 
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+	public boolean isRole(Role role) {
+		return this.role == role.getId();
 	}
 }

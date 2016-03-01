@@ -160,4 +160,8 @@ public class User implements IBaseEntity {
 	public void setAddress(String address) {
 		this.address = address;
 	}
+
+	public boolean isRole(Role role) {
+		return this.role == role.getId();
+	}
 }

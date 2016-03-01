@@ -3,6 +3,7 @@ package com.project.ttxvn.service;
 import com.project.ttxvn.dao.INewsDAO;
 import com.project.ttxvn.dao.daoImpl.NewsDAOImpl;
 import com.project.ttxvn.model.News;
+import com.project.ttxvn.model.User;
 import iptc.newsml.g2.builder.ContentMetaBuilder;
 import iptc.newsml.g2.builder.ItemMetaBuilder;
 import iptc.newsml.g2.builder.NewsItemBuilder;
@@ -77,13 +78,12 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> {
     }
 
 
-    @Override
     @GET
     @Path("/list")
     @Produces("application/json")
-    public List<News> findAll() {
+    public List<News> findAll(@QueryParam("role") int role) {
         CategoryService categoryService = new CategoryService();
-        List<News> list =  super.findAll();
+        List<News> list = super.findAll();
         if (list != null && !list.isEmpty()) {
             for (final News item : list) {
                 item.setCategory(categoryService.find(item.getCatId()));
@@ -95,7 +95,7 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> {
     @GET
     @Path("/findByCategory")
     @Produces("application/json")
-    public List<News> findByCategory(@QueryParam("id") long id) {
+    public List<News> findByCategory(@QueryParam("id") long id, @QueryParam("role") int role) {
         if (id > 0) {
             CategoryService categoryService = new CategoryService();
             List<News> list = getIBean().findByCategoryId(id);
@@ -148,7 +148,7 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> {
     @Path("/newsmlg2/category/{id}")
     @Produces("application/xml")
     public List<NewsItem> findNewsmlG2ByCategoryId(@PathParam("id") long id) {
-        List<News> newsList = findByCategory(id);
+        List<News> newsList = findByCategory(id, User.Role.ADMINISTRATOR.getId());
         List<NewsItem> newsItemList = new ArrayList<>();
         if (newsList != null && newsList.size() > 0) {
             for (News news : newsList) {
