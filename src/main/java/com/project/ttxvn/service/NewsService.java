@@ -18,6 +18,8 @@ import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
@@ -252,7 +254,8 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> {
     private boolean saveNewsMLG2(String source) throws Exception {
         logger.info("Source: " + source);
         NewsItem newsItem = NewsMLG2.aProcessor().toModel(NewsItem.class, new StringReader(source));
-        logger.info("NewsItem: " + new GsonBuilder().setPrettyPrinting().create().toJson(newsItem));
+        Document doc = Jsoup.parse(source);
+        //logger.info("NewsItem: " + new GsonBuilder().setPrettyPrinting().create().toJson(newsItem));
         News news = new News();
         news.setTitle(newsItem.getContentMeta().getHeadline().getValue());
         news.setAuthor(newsItem.getContentMeta().getCreator().getName());
@@ -264,7 +267,12 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> {
             news.setSource(newsItem.getContentMeta().getInfoSource().getName().iterator().next().getValue());
         } catch (Exception e) {}
         news.setDateTime(new Date(System.currentTimeMillis()));
-        news.setContent(newsItem.getContentSet().getInlineXML().getNitf().getBody().getContent());
+        try {
+            news.setContent(doc.getElementsByTag("body.content").first().text());
+        } catch (Exception e) {
+            e.printStackTrace();
+            news.setContent("");
+        }
         return save(news) != null;
     }
 

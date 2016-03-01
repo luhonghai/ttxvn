@@ -2,6 +2,7 @@
 <%@ tag import="com.project.ttxvn.model.Category" %>
 <%@ tag import="java.util.List" %>
 <%@ tag import="com.project.ttxvn.model.User" %>
+<%@ tag import="com.project.ttxvn.model.News" %>
 <%@tag description="User management" pageEncoding="UTF-8" %>
 <%
 	User user = (User) session.getAttribute("admin");
@@ -11,6 +12,15 @@
 <a href=""><h1>News management</h1></a>
 <script>
 	var postAuthor = "<%=user.getEmail()%>";
+
+	var statusList = [];
+	<%
+		for (News.Status status : News.Status.values()) {
+	%>
+	statusList[<%=status.getId()%>] = "<%=status.toString()%>";
+	<%
+		}
+	%>
 </script>
 <hr>
 Select by category <select name="selFilterCategory">
@@ -106,6 +116,22 @@ Select by category <select name="selFilterCategory">
 </div>
 <script>
 	var target = "news";
+	function getStatusClass(status) {
+		var statusClass = "";
+		switch (status) {
+			case 0:
+				statusClass = "btn-warning";
+				break;
+			case 1:
+				statusClass = "btn-success";
+				break;
+			case 2:
+				statusClass = "btn-primary";
+				break;
+		}
+		return statusClass;
+
+	}
 	var TableData = {
 		saveUrl: App.contextPath + "/rest/" + target + "/save",
 		deleteUrl: App.contextPath + "/rest/" + target + "/delete",
@@ -176,6 +202,24 @@ Select by category <select name="selFilterCategory">
 						title: ""
 					}
 				}
+
+				var status = data[i].status;
+				var statusClass = getStatusClass(status);
+				data[i].strStatus = '<a class="btn-status ' + statusClass + '" href="javascript:void(0);">' +  statusList[status] + '</a>';
+
+
+				var btnCommands = [];
+				btnCommands.push('<div class="table-action-group">');
+				if (data[i].status != <%=News.Status.APPROVED.getId()%>) {
+					btnCommands.push('<button type="button" item-id="' + data[i].id + '" status-id="' + (status + 1) + '" class="btn ' + getStatusClass(status + 1) + ' table-action btn-update-status btn-xs">');
+					btnCommands.push('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>');
+					btnCommands.push(' Submit ' + statusList[status + 1]);
+					btnCommands.push('</button>');
+				}
+				btnCommands.push('</div>');
+
+				data[i].action = btnCommands.join("");
+
 				data[i].strDateTime =
 						(typeof data[i].dateTime == 'undefined' || data[i].dateTime <= 0)
 								? ""
@@ -185,6 +229,33 @@ Select by category <select name="selFilterCategory">
 			return data;
 		},
 		init: function() {
+
+			$('body').on('click', '.btn-update-status', function() {
+				var nid = parseInt($(this).attr("item-id"));
+				var status = parseInt($(this).attr("status-id"));
+				$.ajax({
+					type: "GET",
+					url: App.contextPath + "/rest/" + target + "/update/status",
+					contentType: "application/json",
+					dataType: "json",
+					data: {
+						nid: nid,
+						status: status
+					}
+				}).done(function( data ) {
+					if (data)
+					{
+						swal("Update successfully!", "", "success");
+						App.loadTableData();
+					} else {
+						swal("Error!", "Could not complete", "warning");
+					}
+				}).error(function() {
+					swal("Error!", "Could not complete", "warning");
+					$("#dataModalSend").modal("hide");
+				});
+			});
+
 			$('select[name=selFilterCategory]').on('change', function (e) {
 				var optionSelected = $("option:selected", this);
 				var valueSelected = this.value;
@@ -219,6 +290,8 @@ Select by category <select name="selFilterCategory">
 			{data: "location", title: "Location"},
 			{data : "strDateTime", title: "Updated Date"},
 			{data : "newsmlg2", title: "NewsML-G2"},
+			{data: "strStatus", title: ""},
+			{data: "action", title: ""},
 			{data: "command", title: ""}
 		]
 	}

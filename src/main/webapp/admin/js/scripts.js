@@ -62,13 +62,13 @@ $(document).ready(function() {
 			if (!data[i].skipEdit) {
 				btnCommands.push('<button type="button" item-id="' + data[i].id + '" class="btn btn-warning table-action btn-edit btn-xs">');
 				btnCommands.push('<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>');
-				btnCommands.push('Edit');
+				btnCommands.push(' Edit');
 				btnCommands.push('</button>');
 			}
 			if (!data[i].skipDelete) {
 				btnCommands.push('<button type="button" item-id="' + data[i].id + '" class="btn btn-danger table-action btn-delete btn-xs">');
 				btnCommands.push('<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>');
-				btnCommands.push('Delete');
+				btnCommands.push(' Delete');
 				btnCommands.push('</button>');
 			}
 			btnCommands.push('</div>');

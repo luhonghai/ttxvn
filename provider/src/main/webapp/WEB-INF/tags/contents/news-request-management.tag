@@ -52,7 +52,7 @@
 							<select id="selNews" name="pid">
 								<%
 									NewsService newsService = new NewsService();
-									List<News> newsList = newsService.findAll();
+									List<News> newsList = newsService.findByCategoryAndStatus(0, News.Status.APPROVED.getId());
 									if (newsList != null && !newsList.isEmpty()) {
 										for (News news : newsList) {
 											%>

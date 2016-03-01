@@ -37,12 +37,12 @@ public class SoapProvider implements ISoapProvider {
     @Override
     public List<News> findNews() {
         NewsService newsService = new NewsService();
-        return newsService.findAll();
+        return newsService.findByCategoryAndStatus(0, News.Status.APPROVED.getId());
     }
 
     @Override
     public List<News> findNewsByCategory(long categoryId) {
         NewsService newsService = new NewsService();
-        return newsService.findByCategory(categoryId);
+        return newsService.findByCategoryAndStatus(categoryId, News.Status.APPROVED.getId());
     }
 }

@@ -60,6 +60,7 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> {
             tmp.setLocation(obj.getLocation());
             tmp.setSource(obj.getSource());
             tmp.setAuthor(obj.getAuthor());
+            tmp.setStatus(News.Status.PREVIEW.getId());
             return getBean().edit(tmp);
         } else {
             obj.setDateTime(new Date(System.currentTimeMillis()));
@@ -107,6 +108,26 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> {
         } else {
             return findAll();
         }
+    }
+
+    public List<News> findByCategoryAndStatus(long id, int status) {
+        CategoryService categoryService = new CategoryService();
+        List<News> list = getIBean().findByCategoryId(id, status);
+        if (list != null && !list.isEmpty()) {
+            for (final News item : list) {
+                item.setCategory(categoryService.find(item.getCatId()));
+            }
+        }
+        return list;
+    }
+
+    @GET
+    @Path("/update/status")
+    @Produces("application/json")
+    public boolean updateNewsStatus(@QueryParam("nid") long nid, @QueryParam("status") int status) {
+        News news = find(nid);
+        news.setStatus(status);
+        return super.save(news) != null;
     }
 
     @GET
