@@ -1,20 +1,34 @@
-<%@ tag import="com.project.ttxvn.service.CategoryService" %>
 <%@ tag import="com.project.ttxvn.model.Category" %>
-<%@ tag import="java.util.List" %>
 <%@ tag import="com.project.ttxvn.model.User" %>
-<%@ tag import="com.project.ttxvn.service.UserService" %>
+<%@ tag import="com.project.ttxvn.service.CategoryService" %>
 <%@ tag import="com.project.ttxvn.service.NewsService" %>
+<%@ tag import="java.util.List" %>
+<%@ tag import="com.project.ttxvn.model.News" %>
 <%@tag description="User management" pageEncoding="UTF-8" %>
+<%@attribute name="type" required="true" %>
 <%
-	NewsService newsService = new NewsService();
-	newsService.fetchNewsFromProvider();
+	int pageType = Integer.parseInt(type);
+	if (pageType == 0) {
+		NewsService newsService = new NewsService();
+		newsService.fetchNewsFromProvider();
+	}
 	User user = (User) session.getAttribute("admin");
 	CategoryService categoryService = new CategoryService();
 	List<Category> categoryList = categoryService.findAll();
 %>
-<a href=""><h1>News management</h1></a>
+<a href=""><h1>News <%=pageType == 0 ? "Review" : "Management"%></h1></a>
 <script>
 	var postAuthor = "<%=user.getEmail()%>";
+	var pageType = <%=pageType%>;
+	var statusList = [];
+	<%
+		for (News.Status status : News.Status.values()) {
+	%>
+	statusList[<%=status.getId()%>] = "<%=status.toString()%>";
+	<%
+		}
+	%>
+
 </script>
 <hr>
 Select by category <select name="selFilterCategory">
@@ -32,6 +46,7 @@ Select by category <select name="selFilterCategory">
 <hr>
 <div class="row">
 	<div class="col-md-12">
+		<% if (pageType == 0) {%>
 		<!-- Button trigger modal -->
 		<button type="button" class="btn btn-primary btn-send table-action">
 			<span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Send News request
@@ -44,6 +59,9 @@ Select by category <select name="selFilterCategory">
 			<input type="text" class="form-control" id="txtImport" placeholder="NewsML-G2 URL"/>
 		</div>
 		<hr>
+		<div id="fileuploader">Upload NewsML-G2</div>
+		<hr>
+		<%}%>
 		<div class="table-responsive" id="tableContainer">
 		</div>
 	</div>
@@ -151,11 +169,57 @@ Select by category <select name="selFilterCategory">
 
 <script>
 	var target = "news";
+
+	function initUploadForm() {
+		$("#fileuploader").empty();
+		$div = $(document.createElement("div"));
+		$div.attr("id", "fileUploaderContainer");
+		$("#fileuploader").html($div);
+		$("#fileUploaderContainer").uploadFile({
+			url: App.contextPath  + "/rest/news/upload/newsmlg2",
+			fileName:"xml",
+			maxFileCount: 1,
+			allowedTypes: "xml",
+			onSuccess:function(files,data,xhr,pd)
+			{
+				if (data)
+				{
+					swal("Upload successfully!", "", "success");
+					App.loadTableData();
+				} else {
+					swal("Error!", "Could not complete", "warning");
+				}
+				initUploadForm();
+			},
+			onError: function() {
+				swal("Error!", "Could not complete", "warning");
+				initUploadForm();
+			}
+		});
+	}
+
+	function getStatusClass(status) {
+		var statusClass = "";
+		switch (status) {
+			case 0:
+				statusClass = "btn-warning";
+				break;
+			case 1:
+				statusClass = "btn-success";
+				break;
+			case 2:
+				statusClass = "btn-primary";
+				break;
+		}
+		return statusClass;
+
+	}
+
 	var TableData = {
 		saveUrl: App.contextPath + "/rest/" + target + "/save",
 		deleteUrl: App.contextPath + "/rest/" + target + "/delete",
 		findUrl: App.contextPath + "/rest/" + target + "/find",
-		listUrl : App.contextPath + "/rest/" + target + "/list",
+		listUrl : App.contextPath + "/rest/" + target + "/findByCategory?id=" + 0 + "&pageType=" + pageType,
 		showAddForm: function() {
 			$("#dataModelTitle").html("Add News");
 			$("input[name=txtId]").val("-1");
@@ -221,6 +285,24 @@ Select by category <select name="selFilterCategory">
 						title: ""
 					}
 				}
+
+				var status = data[i].status;
+				var statusClass = getStatusClass(status);
+				data[i].strStatus = '<a class="btn-status ' + statusClass + '" href="javascript:void(0);">' +  statusList[status] + '</a>';
+
+
+				var btnCommands = [];
+				btnCommands.push('<div class="table-action-group">');
+				if (data[i].status != <%=News.Status.APPROVED.getId()%>) {
+					btnCommands.push('<button type="button" item-id="' + data[i].id + '" status-id="' + (status + 1) + '" class="btn ' + getStatusClass(status + 1) + ' table-action btn-update-status btn-xs">');
+					btnCommands.push('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>');
+					btnCommands.push(' Submit ' + statusList[status + 1]);
+					btnCommands.push('</button>');
+				}
+				btnCommands.push('</div>');
+
+				data[i].action = btnCommands.join("");
+
 				data[i].strDateTime =
 						(typeof data[i].dateTime == 'undefined' || data[i].dateTime <= 0)
 								? ""
@@ -230,11 +312,41 @@ Select by category <select name="selFilterCategory">
 			return data;
 		},
 		init: function() {
+			if (pageType == 0) {
+				initUploadForm();
+			}
+
 			$('select[name=selFilterCategory]').on('change', function (e) {
 				var optionSelected = $("option:selected", this);
 				var valueSelected = this.value;
-				TableData.listUrl = App.contextPath + "/rest/" + target + "/findByCategory?id=" + valueSelected;
+				TableData.listUrl = App.contextPath + "/rest/" + target + "/findByCategory?id=" + valueSelected + "&pageType=" + pageType;
 				App.loadTableData();
+			});
+
+			$('body').on('click', '.btn-update-status', function() {
+				var nid = parseInt($(this).attr("item-id"));
+				var status = parseInt($(this).attr("status-id"));
+				$.ajax({
+					type: "GET",
+					url: App.contextPath + "/rest/" + target + "/update/status",
+					contentType: "application/json",
+					dataType: "json",
+					data: {
+						nid: nid,
+						status: status
+					}
+				}).done(function( data ) {
+					if (data)
+					{
+						swal("Update successfully!", "", "success");
+						App.loadTableData();
+					} else {
+						swal("Error!", "Could not complete", "warning");
+					}
+				}).error(function() {
+					swal("Error!", "Could not complete", "warning");
+					$("#dataModalSend").modal("hide");
+				});
 			});
 
 			$('body').on('click', '.btn-send', function() {
@@ -280,7 +392,7 @@ Select by category <select name="selFilterCategory">
 					if (data)
 					{
 						swal("Import successfully!", "", "success");
-						$("#txtImport").val("")
+						$("#txtImport").val("");
 						App.loadTableData()
 					} else {
 						swal("Error!", "Could not complete", "warning");
@@ -318,7 +430,8 @@ Select by category <select name="selFilterCategory">
 			{data: "source", title: "Source"},
 			{data: "location", title: "Location"},
 			{data : "strDateTime", title: "Updated Date"},
-//			{data : "newsmlg2", title: "NewsML-G2"},
+			{data : "strStatus", title: "Status"},
+			{data : "action", title: "Action"},
 			{data: "command", title: ""}
 		]
 	}

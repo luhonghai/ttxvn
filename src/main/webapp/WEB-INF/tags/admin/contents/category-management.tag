@@ -102,7 +102,7 @@
 			{data: "title", title: "Title"},
 			{data: "description", title: "Description"},
 			{data: "newsCount", title: "News count"},
-			{data : "newsmlg2", title: "NewsML-G2"},
+//			{data : "newsmlg2", title: "NewsML-G2"},
 			{data: "command", title: ""}
 		]
 	}

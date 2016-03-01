@@ -1,6 +1,5 @@
 package com.project.ttxvn.service;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.project.ttxvn.dao.INewsDAO;
 import com.project.ttxvn.dao.daoImpl.NewsDAOImpl;
@@ -15,9 +14,15 @@ import iptc.newsml.g2.builder.NewsItemBuilder;
 import iptc.newsml.g2.model.Name;
 import iptc.newsml.g2.model.NewsItem;
 import iptc.newsml.g2.model.Subject;
+import org.apache.commons.fileupload.FileItemIterator;
+import org.apache.commons.fileupload.FileItemStream;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -72,6 +77,7 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> {
             tmp.setLocation(obj.getLocation());
             tmp.setSource(obj.getSource());
             tmp.setAuthor(obj.getAuthor());
+            tmp.setStatus(News.Status.PREVIEW.getId());
             return getBean().edit(tmp);
         } else {
             obj.setDateTime(new Date(System.currentTimeMillis()));
@@ -120,7 +126,18 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> {
     @GET
     @Path("/findByCategory")
     @Produces("application/json")
-    public List<News> findByCategory(@QueryParam("id") long id) {
+    public List<News> findByCategory(@QueryParam("id") long id, @QueryParam("pageType") int p) {
+            CategoryService categoryService = new CategoryService();
+            List<News> list = getIBean().findByCategoryId(id, p);
+            if (list != null && !list.isEmpty()) {
+                for (final News item : list) {
+                    item.setCategory(categoryService.find(item.getCatId()));
+                }
+            }
+            return list;
+    }
+
+    public List<News> findByCategory(long id) {
         if (id > 0) {
             CategoryService categoryService = new CategoryService();
             List<News> list = getIBean().findByCategoryId(id);
@@ -153,7 +170,7 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> {
     @Path("/newsmlg2/category/{id}")
     @Produces("application/xml")
     public List<NewsItem> findNewsmlG2ByCategoryId(@PathParam("id") long id) {
-        List<News> newsList = findByCategory(id);
+        List<News> newsList = findByCategory(id, 1);
         List<NewsItem> newsItemList = new ArrayList<>();
         if (newsList != null && newsList.size() > 0) {
             for (News news : newsList) {
@@ -190,7 +207,7 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> {
     public boolean updateNewsStatus(@QueryParam("nid") long nid, @QueryParam("status") int status) {
         News news = find(nid);
         news.setStatus(status);
-        return save(news) != null;
+        return super.save(news) != null;
     }
 
     @GET
@@ -199,26 +216,56 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> {
     public boolean importNewsMLG2(@QueryParam("dataUrl") String url) {
         try {
             String source = IOUtils.toString(new URL(url), "UTF-8");
-            logger.info("Source: " + source);
-            NewsItem newsItem = NewsMLG2.aProcessor().toModel(NewsItem.class, new StringReader(source));
-            logger.info("NewsItem: " + new GsonBuilder().setPrettyPrinting().create().toJson(newsItem));
-            News news = new News();
-            news.setTitle(newsItem.getContentMeta().getHeadline().getValue());
-            news.setAuthor(newsItem.getContentMeta().getCreator().getName());
-            news.setImage("");
-            try {
-                news.setLocation(newsItem.getContentMeta().getLocated().getName().iterator().next().getValue());
-            } catch (Exception e) {}
-            try {
-                news.setSource(newsItem.getContentMeta().getInfoSource().getName().iterator().next().getValue());
-            } catch (Exception e) {}
-            news.setDateTime(new Date(System.currentTimeMillis()));
-            news.setContent(newsItem.getContentSet().getInlineXML().getNitf().getBody().getContent());
-            return save(news) != null;
+            return saveNewsMLG2(source);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
+    }
+
+    @POST
+    @Path("/upload/newsmlg2")
+    public boolean uploadNewsMLG2(@Context HttpServletRequest request) {
+        try {
+            ServletFileUpload upload = new ServletFileUpload();
+            FileItemIterator fileIterator = upload.getItemIterator(request);
+            String source = "";
+            while (fileIterator.hasNext()) {
+                FileItemStream item = fileIterator.next();
+                if ("xml".equals(item.getFieldName())) {
+                    InputStream is = null;
+                    try {
+                        is = item.openStream();
+                        source = IOUtils.toString(is, "UTF-8");
+                    } finally {
+                        IOUtils.closeQuietly(is);
+                    }
+                }
+            }
+            return saveNewsMLG2(source);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private boolean saveNewsMLG2(String source) throws Exception {
+        logger.info("Source: " + source);
+        NewsItem newsItem = NewsMLG2.aProcessor().toModel(NewsItem.class, new StringReader(source));
+        logger.info("NewsItem: " + new GsonBuilder().setPrettyPrinting().create().toJson(newsItem));
+        News news = new News();
+        news.setTitle(newsItem.getContentMeta().getHeadline().getValue());
+        news.setAuthor(newsItem.getContentMeta().getCreator().getName());
+        news.setImage("");
+        try {
+            news.setLocation(newsItem.getContentMeta().getLocated().getName().iterator().next().getValue());
+        } catch (Exception e) {}
+        try {
+            news.setSource(newsItem.getContentMeta().getInfoSource().getName().iterator().next().getValue());
+        } catch (Exception e) {}
+        news.setDateTime(new Date(System.currentTimeMillis()));
+        news.setContent(newsItem.getContentSet().getInlineXML().getNitf().getBody().getContent());
+        return save(news) != null;
     }
 
     private NewsItem convertNewsToNewsMLG2(News news) {

@@ -13,6 +13,10 @@ public interface INewsDAO extends IBaseDAO<News>{
 
     List<News> findByCategoryId(long id);
 
+    List<News> findByCategoryId(long id, int pageType);
+
+    List<News> findByStatus(News.Status status);
+
     int countByCategoryId(long id);
 
     News findByUUID(String uuid);

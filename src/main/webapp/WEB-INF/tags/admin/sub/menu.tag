@@ -29,12 +29,14 @@
 					Category </a></li>
 				<li><a href="<%=request.getContextPath() %>/admin/news.jsp"> <i class="glyphicon glyphicon-pencil"></i>
 					News </a></li>
+				<li><a href="<%=request.getContextPath() %>/admin/news-review.jsp"> <i class="glyphicon glyphicon-save"></i>
+					News Review </a></li>
 			</ul>
 		</li>
-		<li class="nav-header"><a href="<%=request.getContextPath() %>/admin/newsml-g2.jsp" >
-				<h5>
-					NewsML-G2
-				</h5>
-		</a></li>
+		<%--<li class="nav-header"><a href="<%=request.getContextPath() %>/admin/newsml-g2.jsp" >--%>
+				<%--<h5>--%>
+					<%--NewsML-G2--%>
+				<%--</h5>--%>
+		<%--</a></li>--%>
 	</ul>
 

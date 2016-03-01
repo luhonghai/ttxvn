@@ -32,6 +32,10 @@ public class News implements IBaseEntity {
             return PENDING;
         }
 
+        public int getId() {
+            return id;
+        }
+
         @Override
         public String toString() {
             return name;

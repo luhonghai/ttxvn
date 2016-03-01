@@ -10,6 +10,7 @@
 		<link href="<%=request.getContextPath() %>/admin/css/dataTables.bootstrap.css" rel="stylesheet">
 		<link href="<%=request.getContextPath() %>/admin/css/font-awesome.css" rel="stylesheet">
 		<link href="<%=request.getContextPath() %>/admin/css/sweet-alert.css" rel="stylesheet">
+		<link href="<%=request.getContextPath() %>/css/uploadfile.css" rel="stylesheet">
 		<!--[if lt IE 9]>
 			<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->

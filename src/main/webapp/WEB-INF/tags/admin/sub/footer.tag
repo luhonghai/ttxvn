@@ -11,4 +11,6 @@
 <script src="<%=request.getContextPath() %>/admin/js/handlebars-v3.0.0.js"></script>
 <script src="<%=request.getContextPath() %>/js/tinymce/jquery.tinymce.min.js"></script>
 <script src="<%=request.getContextPath() %>/js/tinymce/tinymce.min.js"></script>
+<script src="<%=request.getContextPath() %>/js/jquery.uploadfile.min.js"></script>
+<script src="<%=request.getContextPath() %>/js/bootstrap-filestyle.min.js"></script>
 <script src="<%=request.getContextPath() %>/admin/js/scripts.js"></script>
