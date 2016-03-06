@@ -3,9 +3,7 @@ package com.project.ttxvn.utils;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-/**
- * Created by longnguyen on 2/3/15.
- */
+
 public class MD5Helper {
     public static String md5(String input) {
 

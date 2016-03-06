@@ -267,7 +267,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 <div class="s-grid-left">
                     <div class="cricket">
                         <header>
-                            <h3 class="title-head">Business</h3>
+                            <h3 class="title-head">Giải trí</h3>
                         </header>
                         <div class="c-sports-main">
                             <div class="c-image">
@@ -326,7 +326,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 <div class="s-grid-right">
                     <div class="cricket">
                         <header>
-                            <h3 class="title-popular">Technology</h3>
+                            <h3 class="title-popular">Công nghệ</h3>
                         </header>
                         <div class="c-sports-main">
                             <div class="c-image">

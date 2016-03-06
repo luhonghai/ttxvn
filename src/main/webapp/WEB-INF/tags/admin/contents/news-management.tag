@@ -299,6 +299,13 @@ Select by category <select name="selFilterCategory">
 					btnCommands.push(' Submit ' + statusList[status + 1]);
 					btnCommands.push('</button>');
 				}
+				if (!data[i].isFirstPage) {
+					btnCommands.push('<button type="button" item-id="' + data[i].id + '" class="btn btn-success table-action btn-update-firstpage btn-xs">');
+					btnCommands.push('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>');
+					btnCommands.push(' Submit to first page');
+					btnCommands.push('</button>');
+				}
+
 				btnCommands.push('</div>');
 
 				data[i].action = btnCommands.join("");
@@ -334,6 +341,30 @@ Select by category <select name="selFilterCategory">
 					data: {
 						nid: nid,
 						status: status
+					}
+				}).done(function( data ) {
+					if (data)
+					{
+						swal("Update successfully!", "", "success");
+						App.loadTableData();
+					} else {
+						swal("Error!", "Could not complete", "warning");
+					}
+				}).error(function() {
+					swal("Error!", "Could not complete", "warning");
+					$("#dataModalSend").modal("hide");
+				});
+			});
+
+			$('body').on('click', '.btn-update-firstpage', function() {
+				var nid = parseInt($(this).attr("item-id"));
+				$.ajax({
+					type: "GET",
+					url: App.contextPath + "/rest/" + target + "/update/firstpage",
+					contentType: "application/json",
+					dataType: "json",
+					data: {
+						nid: nid
 					}
 				}).done(function( data ) {
 					if (data)

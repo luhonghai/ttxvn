@@ -9,9 +9,9 @@ public class Common {
     public static final String FIND_ALL = "findAll";
     public static final String LOGIN = "login";
     public static final String FIND_BY_EMAIL = "findByEmail";
-
-
     public static final String EMAIL_SENDER = "bamboo@c-mg.com";
     public static final String EMAIL_SENDER_PASSWORD = "W3lcom3123";
+
+    public static final boolean IS_SERVICE = true;
 
 }

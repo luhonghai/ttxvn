@@ -13,6 +13,14 @@ import java.util.Date;
 public class News implements IBaseEntity {
 
 
+    public boolean isFirstPage() {
+        return isFirstPage;
+    }
+
+    public void setIsFirstPage(boolean isFirstPage) {
+        this.isFirstPage = isFirstPage;
+    }
+
     public enum Status {
         PENDING(0, "Pending"),
         PREVIEW(1, "Preview"),
@@ -81,6 +89,9 @@ public class News implements IBaseEntity {
 
     @Transient
     private Category category;
+
+    @Transient
+    private boolean isFirstPage;
 
     public long getId() {
         return id;
