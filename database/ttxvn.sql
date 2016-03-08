@@ -61,6 +61,20 @@ CREATE TABLE IF NOT EXISTS `news` (
   `uuid` text
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=8 ;
 
+CREATE TABLE IF NOT EXISTS `imagenews` (
+`id` int(11) NOT NULL,
+  `title` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `caption` text CHARACTER SET utf8 COLLATE utf8_bin,
+  `date_create` datetime NOT NULL,
+  `imageLink` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `author` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `infoSource` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `location` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `cat_id` int(11) NOT NULL,
+  `status` int(11) DEFAULT NULL,
+  `uuid` text
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=8 ;
+
 --
 -- Dumping data for table `news`
 --

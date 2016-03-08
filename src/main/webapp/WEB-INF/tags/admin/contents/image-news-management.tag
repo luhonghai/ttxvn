@@ -1,9 +1,7 @@
 <%@ tag import="com.project.ttxvn.model.Category" %>
 <%@ tag import="com.project.ttxvn.model.User" %>
 <%@ tag import="com.project.ttxvn.service.CategoryService" %>
-<%@ tag import="com.project.ttxvn.service.NewsService" %>
 <%@ tag import="java.util.List" %>
-<%@ tag import="com.project.ttxvn.model.News" %>
 <%@ tag import="com.project.ttxvn.service.ImageNewsService" %>
 <%@ tag import="com.project.ttxvn.model.ImageNews" %>
 <%@ tag import="com.project.ttxvn.constant.Common" %>
@@ -12,15 +10,12 @@
 <%
 	int pageType = Integer.parseInt(type);
 	if (pageType == 0) {
-		NewsService newsService = new NewsService();
-		newsService.fetchNewsFromProvider();
+		ImageNewsService newsService = new ImageNewsService();
+		//newsService.fetchNewsFromProvider();
 	}
 	User user = (User) session.getAttribute("admin");
 	CategoryService categoryService = new CategoryService();
-	ImageNewsService imageNewsService = new ImageNewsService();
 	List<Category> categoryList = categoryService.findAll();
-	List<ImageNews> imageNewsList = imageNewsService.findByCategoryAndStatus(0, ImageNews.Status.APPROVED.getId());
-
 %>
 <a href=""><h1>News <%=pageType == 0 ? "Review" : "Management"%></h1></a>
 <script>
@@ -28,7 +23,7 @@
 	var pageType = <%=pageType%>;
 	var statusList = [];
 	<%
-		for (News.Status status : News.Status.values()) {
+		for (ImageNews.Status status : ImageNews.Status.values()) {
 	%>
 	statusList[<%=status.getId()%>] = "<%=status.toString()%>";
 	<%
@@ -54,6 +49,7 @@ Select by category <select name="selFilterCategory">
 	<div class="col-md-12">
 		<% if (pageType == 0) {%>
 		<!-- Button trigger modal -->
+		<div style="display: none">
 		<button type="button" class="btn btn-primary btn-send table-action">
 			<span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Send News request
 		</button>
@@ -67,6 +63,7 @@ Select by category <select name="selFilterCategory">
 		<hr>
 		<div id="fileuploader">Upload NewsML-G2</div>
 		<hr>
+		</div>
 		<%}%>
 		<div class="table-responsive" id="tableContainer">
 		</div>
@@ -102,27 +99,6 @@ Select by category <select name="selFilterCategory">
 											%>
 											<option value="<%=category.getId()%>"><%=category.getTitle()%></option>
 											<%
-										}
-									}
-								%>
-							</select>
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-sm-2 control-label">Select image</label>
-						<div class="col-xs-8">
-							<select name="selImage" class="image-picker masonry">
-								<option value="">None</option>
-								<%
-									if (imageNewsList != null && !imageNewsList.isEmpty()) {
-										for (ImageNews imageNews : imageNewsList) {
-											String href = imageNews.getImageLink();
-											if (href != null && !href.contains("http")) {
-												href = Common.REMOTE_HOST + href;
-											}
-								%>
-								<option data-img-src='<%=href%>' value="<%=href%>"><%=imageNews.getCaption()%></option>
-								<%
 										}
 									}
 								%>
@@ -195,7 +171,7 @@ Select by category <select name="selFilterCategory">
 </div>
 
 <script>
-	var target = "news";
+	var target = "imageNews";
 
 	function initUploadForm() {
 		$("#fileuploader").empty();
@@ -249,7 +225,6 @@ Select by category <select name="selFilterCategory">
 		listUrl : App.contextPath + "/rest/" + target + "/findByCategory?id=" + 0 + "&pageType=" + pageType,
 		showAddForm: function() {
 			$("#dataModelTitle").html("Add News");
-			$("select[name=selImage]").val("");
 			$("input[name=txtId]").val("-1");
 			$("input[name=txtTitle]").val("");
 			//tinymce.get('textarea[name=txtContent]').setContent("<p></p>");
@@ -270,8 +245,6 @@ Select by category <select name="selFilterCategory">
 			if (typeof obj.content != 'undefined' && obj.content != null && obj.content.length > 0) {
 				content = obj.content;
 			}
-
-			$("select[name=selImage]").val(obj.image);
 			$("#dataModelTitle").html("Edit News");
 			$("input[name=txtId]").val(obj.id);
 			$("input[name=txtId]").prop("disabled", "disabled");
@@ -301,8 +274,8 @@ Select by category <select name="selFilterCategory">
 				source: $("input[name=txtSource]").val(),
 				location: $("input[name=txtLocation]").val(),
 				catId: parseInt($("select[name=selCategory]").val()),
-				image: $("select[name=selImage]").val(),
-				author: postAuthor
+				author: postAuthor,
+				image: ""
 			};
 			return obj;
 		},
@@ -315,10 +288,8 @@ Select by category <select name="selFilterCategory">
 						title: ""
 					}
 				}
-				if (typeof  data[i].image != 'undefined' && data[i].image.length > 0) {
-					data[i].imagePreview = "<img width='100px' src='" + (data[i].image.indexOf("http") != -1 ? data[i].image : "<%=Common.REMOTE_HOST%>" + data[i].image)+ "'/>";
-				} else {
-					data[i].imagePreview = ""
+				if (typeof  data[i].imageLink != 'undefined') {
+					data[i].image = "<img width='100px' src='" + (data[i].imageLink.indexOf("http") != -1 ? data[i].imageLink : "<%=Common.REMOTE_HOST%>" + data[i].imageLink)+ "'/>";
 				}
 				var status = data[i].status;
 				var statusClass = getStatusClass(status);
@@ -327,7 +298,7 @@ Select by category <select name="selFilterCategory">
 
 				var btnCommands = [];
 				btnCommands.push('<div class="table-action-group">');
-				if (data[i].status != <%=News.Status.APPROVED.getId()%>) {
+				if (data[i].status != <%=ImageNews.Status.APPROVED.getId()%>) {
 					btnCommands.push('<button type="button" item-id="' + data[i].id + '" status-id="' + (status + 1) + '" class="btn ' + getStatusClass(status + 1) + ' table-action btn-update-status btn-xs">');
 					btnCommands.push('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>');
 					btnCommands.push(' Submit ' + statusList[status + 1]);
@@ -336,7 +307,7 @@ Select by category <select name="selFilterCategory">
 				btnCommands.push('</div>');
 
 				data[i].action = btnCommands.join("");
-
+				data[i].skipEdit = true;
 				data[i].strDateTime =
 						(typeof data[i].dateTime == 'undefined' || data[i].dateTime <= 0)
 								? ""
@@ -349,10 +320,7 @@ Select by category <select name="selFilterCategory">
 			if (pageType == 0) {
 				initUploadForm();
 			}
-			$('select[name=selImage]').imagepicker({
-				show_label  : false
-			});
-			$('select[name=selImage]').show();
+
 			$('select[name=selFilterCategory]').on('change', function (e) {
 				var optionSelected = $("option:selected", this);
 				var valueSelected = this.value;
@@ -461,11 +429,12 @@ Select by category <select name="selFilterCategory">
 		name : "News",
 		columns : [
 			{data: "id", title: "ID"},
-			{data: "imagePreview", title: "Image"},
-			{data: "category.title", title: "Category"},
+			{data: "image", title: "Image"},
+//			{data: "category.title", title: "Category"},
 			{data: "title", title: "Title"},
+			{data: "caption", title: "Caption"},
 			{data: "author", title: "Author"},
-			{data: "source", title: "Source"},
+//			{data: "source", title: "Source"},
 			{data: "location", title: "Location"},
 			{data : "strDateTime", title: "Updated Date"},
 			{data : "strStatus", title: "Status"},
