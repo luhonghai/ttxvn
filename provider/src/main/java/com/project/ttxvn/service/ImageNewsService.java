@@ -1,11 +1,9 @@
 package com.project.ttxvn.service;
 
-import com.project.ttxvn.constant.Common;
-import com.project.ttxvn.dao.INewsDAO;
-import com.project.ttxvn.dao.daoImpl.NewsDAOImpl;
-import com.project.ttxvn.model.News;
+import com.project.ttxvn.dao.INewsImageDAO;
+import com.project.ttxvn.dao.daoImpl.ImageNewsDAOImpl;
+import com.project.ttxvn.model.ImageNews;
 import com.project.ttxvn.model.User;
-import com.project.ttxvn.service.soap.SoapFactory;
 import iptc.newsml.g2.builder.ContentMetaBuilder;
 import iptc.newsml.g2.builder.ItemMetaBuilder;
 import iptc.newsml.g2.builder.NewsItemBuilder;
@@ -13,7 +11,6 @@ import iptc.newsml.g2.model.Name;
 import iptc.newsml.g2.model.NewsItem;
 import iptc.newsml.g2.model.Subject;
 
-import javax.jws.WebService;
 import javax.ws.rs.*;
 import java.util.*;
 
@@ -29,16 +26,19 @@ import static iptc.newsml.g2.builder.QcodeBuilder.qcode;
 import static iptc.newsml.g2.builder.RelationBuilder.broader;
 import static iptc.newsml.g2.builder.SubjectBuilder.subject;
 
-
-@Path("news")
-@WebService
-public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> implements INewsSoap{
-
-    public NewsService() {
-        super(INewsDAO.class, NewsDAOImpl.class);
+/**
+ * Created by Thinh on 05-Mar-16.
+ */
+@Path("imageNews")
+public class ImageNewsService extends BaseService<ImageNews, INewsImageDAO, ImageNewsDAOImpl> {
+    public ImageNewsService() {
     }
 
-    public List<News> getAllNews(){
+    public ImageNewsService(Class<INewsImageDAO> remoteClass, Class<ImageNewsDAOImpl> statelessClass) {
+        super(remoteClass, statelessClass);
+    }
+
+    public List<ImageNews> getAllImageNews(){
         return findAll();
     }
 
@@ -47,169 +47,133 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> implem
     @Path("/delete")
     @Produces("application/json")
     public boolean delete(@QueryParam("id") long id) {
-        if (Common.IS_SERVICE) {
-            return super.delete(id);
-        } else {
-            return SoapFactory.createInstance(INewsSoap.class, this.getClass().getSimpleName()).delete(id);
-        }
+        return super.delete(id);
     }
 
     @Override
     @POST
     @Path("/save")
     @Produces("application/json")
-    public News save(News obj) {
-        if (Common.IS_SERVICE) {
+    public ImageNews save(ImageNews obj) {
+        //if (Common.IS_SERVICE) {
             if (obj.getId() > 0) {
-                News tmp = getBean().find(obj.getId());
-                tmp.setContent(obj.getContent());
+                ImageNews tmp = getBean().find(obj.getId());
+                tmp.setCaption(obj.getCaption());
                 tmp.setCatId(obj.getCatId());
                 tmp.setDateTime(new Date(System.currentTimeMillis()));
                 tmp.setTitle(obj.getTitle());
-                tmp.setImage(obj.getImage());
+                tmp.setImageLink(obj.getImageLink());
                 tmp.setLocation(obj.getLocation());
-                tmp.setSource(obj.getSource());
+                tmp.setInfoSource(obj.getInfoSource());
                 tmp.setAuthor(obj.getAuthor());
-                tmp.setStatus(News.Status.PREVIEW.getId());
+                tmp.setStatus(ImageNews.Status.PREVIEW.getId());
                 return getBean().edit(tmp);
             } else {
                 obj.setDateTime(new Date(System.currentTimeMillis()));
                 return super.save(obj);
             }
-        } else {
-            return SoapFactory.createInstance(INewsSoap.class, this.getClass().getSimpleName()).save(obj);
-        }
+//        } else {
+//            return null;
+//        }
     }
 
     @Override
     @GET
     @Path("/find")
     @Produces("application/json")
-    public News find(@QueryParam("id") long id) {
-        if (Common.IS_SERVICE) {
-            return super.find(id);
-        } else {
-            return SoapFactory.createInstance(INewsSoap.class, this.getClass().getSimpleName()).find(id);
-        }
+    public ImageNews find(@QueryParam("id") long id) {
+        return super.find(id);
     }
 
 
     @GET
     @Path("/list")
     @Produces("application/json")
-    public List<News> findAll(@QueryParam("role") int role) {
-        if (Common.IS_SERVICE) {
-            CategoryService categoryService = new CategoryService();
-            List<News> list = super.findAll();
-            if (list != null && !list.isEmpty()) {
-                for (final News item : list) {
-                    item.setCategory(categoryService.find(item.getCatId()));
-                }
+    public List<ImageNews> findAll(@QueryParam("role") int role) {
+        CategoryService categoryService = new CategoryService();
+        List<ImageNews> list = super.findAll();
+        if (list != null && !list.isEmpty()) {
+            for (final ImageNews item : list) {
+                item.setCategory(categoryService.find(item.getCatId()));
             }
-            return list;
-        } else {
-            return SoapFactory.createInstance(INewsSoap.class, this.getClass().getSimpleName()).findAll(role);
         }
+        return list;
     }
 
     @GET
     @Path("/findByCategory")
     @Produces("application/json")
-    public List<News> findByCategory(@QueryParam("id") long id, @QueryParam("role") int role) {
-        if (Common.IS_SERVICE) {
-            if (id > 0) {
-                CategoryService categoryService = new CategoryService();
-                List<News> list = getIBean().findByCategoryId(id);
-                if (list != null && !list.isEmpty()) {
-                    for (final News item : list) {
-                        item.setCategory(categoryService.find(item.getCatId()));
-                    }
-                }
-                return list;
-            } else {
-                return findAll();
-            }
-        } else {
-            return SoapFactory.createInstance(INewsSoap.class, this.getClass().getSimpleName()).findByCategory(id, role);
-        }
-    }
-
-    public List<News> findByCategoryAndStatus(long id, int status) {
-        if (Common.IS_SERVICE) {
+    public List<ImageNews> findByCategory(@QueryParam("id") long id, @QueryParam("role") int role) {
+        if (id > 0) {
             CategoryService categoryService = new CategoryService();
-            List<News> list = getIBean().findByCategoryId(id, status);
+            List<ImageNews> list = getIBean().findByCategoryId(id);
             if (list != null && !list.isEmpty()) {
-                for (final News item : list) {
+                for (final ImageNews item : list) {
                     item.setCategory(categoryService.find(item.getCatId()));
                 }
             }
             return list;
         } else {
-            return SoapFactory.createInstance(INewsSoap.class, this.getClass().getSimpleName()).findByCategoryAndStatus(id, status);
+            return findAll();
         }
+    }
+
+    public List<ImageNews> findByCategoryAndStatus(long id, int status) {
+        CategoryService categoryService = new CategoryService();
+        List<ImageNews> list = getIBean().findByCategoryId(id, status);
+        if (list != null && !list.isEmpty()) {
+            for (final ImageNews item : list) {
+                item.setCategory(categoryService.find(item.getCatId()));
+            }
+        }
+        return list;
     }
 
     @GET
     @Path("/update/status")
     @Produces("application/json")
-    public boolean updateNewsStatus(@QueryParam("nid") long nid, @QueryParam("status") int status) {
-        if (Common.IS_SERVICE) {
-            News news = find(nid);
-            news.setStatus(status);
-            return super.save(news) != null;
-        } else {
-            return SoapFactory.createInstance(INewsSoap.class, this.getClass().getSimpleName()).updateNewsStatus(nid, status);
-        }
+    public boolean updateImageNewsStatus(@QueryParam("nid") long nid, @QueryParam("status") int status) {
+        ImageNews news = find(nid);
+        news.setStatus(status);
+        return super.save(news) != null;
     }
 
     @GET
-    @Path("/newsmlg2/list")
-    @Produces("application/xml")
-    public List<NewsItem> findNewsmlG2() {
-        if (Common.IS_SERVICE) {
-            List<News> newsList = findAll();
-            List<NewsItem> newsItemList = new ArrayList<>();
-            if (newsList != null && newsList.size() > 0) {
-                for (News news : newsList) {
-                    newsItemList.add(convertNewsToNewsMLG2(news));
-                }
-            }
-            return newsItemList;
-        } else {
-            return SoapFactory.createInstance(INewsSoap.class, this.getClass().getSimpleName()).findNewsmlG2();
-        }
-    }
-
-    @GET
-    @Path("/newsmlg2/category/{id}")
+    @Path("/inewsmlg2/category/{id}")
     @Produces("application/xml")
     public List<NewsItem> findNewsmlG2ByCategoryId(@PathParam("id") long id) {
-        if (Common.IS_SERVICE) {
-            List<News> newsList = findByCategory(id, User.Role.ADMINISTRATOR.getId());
-            List<NewsItem> newsItemList = new ArrayList<>();
-            if (newsList != null && newsList.size() > 0) {
-                for (News news : newsList) {
-                    newsItemList.add(convertNewsToNewsMLG2(news));
-                }
+        List<ImageNews> newsList = findByCategory(id, User.Role.ADMINISTRATOR.getId());
+        List<NewsItem> newsItemList = new ArrayList<>();
+        if (newsList != null && newsList.size() > 0) {
+            for (ImageNews news : newsList) {
+                newsItemList.add(convertNewsToNewsMLG2(news));
             }
-            return newsItemList;
-        } else {
-            return SoapFactory.createInstance(INewsSoap.class, this.getClass().getSimpleName()).findNewsmlG2ByCategoryId(id);
         }
+        return newsItemList;
     }
 
     @GET
-    @Path("/newsmlg2/{id}")
+    @Path("/inewsmlg2/list")
     @Produces("application/xml")
-    public NewsItem findNewsmlG2ById(@PathParam("id") long id) {
-        if (Common.IS_SERVICE) {
-            return convertNewsToNewsMLG2(find(id));
-        } else {
-            return SoapFactory.createInstance(INewsSoap.class, this.getClass().getSimpleName()).findNewsmlG2ById(id);
+    public List<NewsItem> findNewsmlG2() {
+        List<ImageNews> newsList = findAll();
+        List<NewsItem> newsItemList = new ArrayList<>();
+        if (newsList != null && newsList.size() > 0) {
+            for (ImageNews news : newsList) {
+                newsItemList.add(convertNewsToNewsMLG2(news));
+            }
         }
+        return newsItemList;
     }
 
-    private NewsItem convertNewsToNewsMLG2(News news) {
+    @GET
+    @Path("/inewsmlg2/{id}")
+    @Produces("application/xml")
+    public NewsItem findNewsmlG2ById(@PathParam("id") long id) {
+        return convertNewsToNewsMLG2(find(id));
+    }
+
+    private NewsItem convertNewsToNewsMLG2(ImageNews news) {
         //TODO create newsItem from news object
         NewsItemBuilder newsItem = newsItem();
         newsItem.guid("urn:newsml:acmenews.com:20141121:US-FINANCE-FED").version(1);
@@ -240,11 +204,11 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> implem
             subject.setName(setName);
             contentMetadata.located(subject);
         }
-        if (news.getSource() != null && news.getSource().length() > 0) {
+        if (news.getInfoSource() != null && news.getInfoSource().length() > 0) {
             Subject subject = new Subject();
             Set<Name> setName = new HashSet<>();
             Name name = new Name();
-            name.setValue(news.getSource());
+            name.setValue(news.getInfoSource());
             setName.add(name);
             subject.setName(setName);
             contentMetadata.infoSource(subject);
@@ -262,7 +226,7 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> implem
 
         NewsItem.ContentSet contentSet = new NewsItem.ContentSet();
         final NewsItem.ContentSetBody body = contentSet.getInlineXML().getNitf().getBody();
-        body.setContent(news.getContent());
+        body.setContent(news.getCaption());
         body.getHead().getHeadline().setHl1(news.getTitle());
         newsItem.contentSet(contentSet);
         try {
@@ -273,10 +237,6 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> implem
     }
 
     public int countByCategory(long id) {
-        if (Common.IS_SERVICE) {
-            return getIBean().countByCategoryId(id);
-        } else {
-            return SoapFactory.createInstance(INewsSoap.class, this.getClass().getSimpleName()).countByCategory(id);
-        }
+        return getIBean().countByCategoryId(id);
     }
 }

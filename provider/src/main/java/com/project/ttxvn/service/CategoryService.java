@@ -1,15 +1,19 @@
 package com.project.ttxvn.service;
 
+import com.project.ttxvn.constant.Common;
 import com.project.ttxvn.dao.ICategoryDAO;
 import com.project.ttxvn.dao.daoImpl.CategoryDAOImpl;
 import com.project.ttxvn.model.Category;
+import com.project.ttxvn.service.soap.SoapFactory;
 
+import javax.jws.WebService;
 import javax.ws.rs.*;
 import java.util.List;
 
 
 @Path("category")
-public class CategoryService extends BaseService<Category, ICategoryDAO, CategoryDAOImpl> {
+@WebService()
+public class CategoryService extends BaseService<Category, ICategoryDAO, CategoryDAOImpl> implements ICategorySoap {
 
     public CategoryService() {
         super(ICategoryDAO.class, CategoryDAOImpl.class);
@@ -25,7 +29,11 @@ public class CategoryService extends BaseService<Category, ICategoryDAO, Categor
     @Path("/delete")
     @Produces("application/json")
     public boolean delete(@QueryParam("id") long id) {
-        return super.delete(id);
+        if (Common.IS_SERVICE) {
+            return super.delete(id);
+        } else {
+            return SoapFactory.createInstance(ICategorySoap.class, this.getClass().getSimpleName()).delete(id);
+        }
     }
 
     @Override
@@ -33,13 +41,17 @@ public class CategoryService extends BaseService<Category, ICategoryDAO, Categor
     @Path("/save")
     @Produces("application/json")
     public Category save(Category obj) {
-        if (obj.getId() > 0) {
-            Category tmp = getBean().find(obj.getId());
-            tmp.setDescription(obj.getDescription());
-            tmp.setTitle(obj.getTitle());
-            return getBean().edit(tmp);
+        if (Common.IS_SERVICE) {
+            if (obj.getId() > 0) {
+                Category tmp = getBean().find(obj.getId());
+                tmp.setDescription(obj.getDescription());
+                tmp.setTitle(obj.getTitle());
+                return getBean().edit(tmp);
+            } else {
+                return super.save(obj);
+            }
         } else {
-            return super.save(obj);
+            return SoapFactory.createInstance(ICategorySoap.class, this.getClass().getSimpleName()).save(obj);
         }
     }
 
@@ -48,7 +60,11 @@ public class CategoryService extends BaseService<Category, ICategoryDAO, Categor
     @Path("/find")
     @Produces("application/json")
     public Category find(@QueryParam("id") long id) {
-        return super.find(id);
+        if (Common.IS_SERVICE) {
+            return super.find(id);
+        } else {
+            return SoapFactory.createInstance(ICategorySoap.class, this.getClass().getSimpleName()).find(id);
+        }
     }
 
 
@@ -57,13 +73,17 @@ public class CategoryService extends BaseService<Category, ICategoryDAO, Categor
     @Path("/list")
     @Produces("application/json")
     public List<Category> findAll() {
-        List<Category> list =  super.findAll();
-        NewsService newsService = new NewsService();
-        if (list != null && !list.isEmpty()) {
-            for (final Category category : list) {
-                category.setNewsCount(newsService.countByCategory(category.getId()));
+        if (Common.IS_SERVICE) {
+            List<Category> list = super.findAll();
+            NewsService newsService = new NewsService();
+            if (list != null && !list.isEmpty()) {
+                for (final Category category : list) {
+                    category.setNewsCount(newsService.countByCategory(category.getId()));
+                }
             }
+            return list;
+        } else {
+            return SoapFactory.createInstance(ICategorySoap.class, this.getClass().getSimpleName()).findAll();
         }
-        return list;
     }
 }

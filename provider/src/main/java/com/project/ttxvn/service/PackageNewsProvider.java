@@ -2,8 +2,11 @@ package com.project.ttxvn.service;
 
 import com.project.ttxvn.constant.Common;
 import com.project.ttxvn.dao.INewsDAO;
+import com.project.ttxvn.dao.IPackageNewsDAO;
 import com.project.ttxvn.dao.daoImpl.NewsDAOImpl;
+import com.project.ttxvn.dao.daoImpl.PackageNewsDAOImpl;
 import com.project.ttxvn.model.News;
+import com.project.ttxvn.model.PackageNews;
 import com.project.ttxvn.model.User;
 import com.project.ttxvn.service.soap.SoapFactory;
 import iptc.newsml.g2.builder.ContentMetaBuilder;
@@ -29,16 +32,18 @@ import static iptc.newsml.g2.builder.QcodeBuilder.qcode;
 import static iptc.newsml.g2.builder.RelationBuilder.broader;
 import static iptc.newsml.g2.builder.SubjectBuilder.subject;
 
-
-@Path("news")
+/**
+ * Created by Thinh on 07-Mar-16.
+ */
+@Path("PackageNews")
 @WebService
-public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> implements INewsSoap{
+public class PackageNewsProvider extends BaseService<PackageNews, IPackageNewsDAO, PackageNewsDAOImpl> implements IPackageNewsSoap{
 
-    public NewsService() {
-        super(INewsDAO.class, NewsDAOImpl.class);
+    public PackageNewsProvider() {
+        super(IPackageNewsDAO.class, PackageNewsDAOImpl.class);
     }
 
-    public List<News> getAllNews(){
+    public List<PackageNews> getAllNews(){
         return findAll();
     }
 
@@ -58,18 +63,18 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> implem
     @POST
     @Path("/save")
     @Produces("application/json")
-    public News save(News obj) {
+    public PackageNews save(PackageNews obj) {
         if (Common.IS_SERVICE) {
             if (obj.getId() > 0) {
-                News tmp = getBean().find(obj.getId());
-                tmp.setContent(obj.getContent());
+                PackageNews tmp = getBean().find(obj.getId());
+                //tmp.setContent(obj.getContent());
                 tmp.setCatId(obj.getCatId());
                 tmp.setDateTime(new Date(System.currentTimeMillis()));
                 tmp.setTitle(obj.getTitle());
-                tmp.setImage(obj.getImage());
-                tmp.setLocation(obj.getLocation());
-                tmp.setSource(obj.getSource());
-                tmp.setAuthor(obj.getAuthor());
+                tmp.setNewsid(obj.getNewsid());
+                tmp.setImageid(obj.getImageid());
+                tmp.setEditor(obj.getEditor());
+                //tmp.set(obj.getAuthor());
                 tmp.setStatus(News.Status.PREVIEW.getId());
                 return getBean().edit(tmp);
             } else {
@@ -77,7 +82,7 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> implem
                 return super.save(obj);
             }
         } else {
-            return SoapFactory.createInstance(INewsSoap.class, this.getClass().getSimpleName()).save(obj);
+            return SoapFactory.createInstance(IPackageNewsSoap.class, this.getClass().getSimpleName()).save(obj);
         }
     }
 
@@ -85,11 +90,11 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> implem
     @GET
     @Path("/find")
     @Produces("application/json")
-    public News find(@QueryParam("id") long id) {
+    public PackageNews find(@QueryParam("id") long id) {
         if (Common.IS_SERVICE) {
             return super.find(id);
         } else {
-            return SoapFactory.createInstance(INewsSoap.class, this.getClass().getSimpleName()).find(id);
+            return SoapFactory.createInstance(IPackageNewsSoap.class, this.getClass().getSimpleName()).find(id);
         }
     }
 
@@ -97,31 +102,31 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> implem
     @GET
     @Path("/list")
     @Produces("application/json")
-    public List<News> findAll(@QueryParam("role") int role) {
+    public List<PackageNews> findAll(@QueryParam("role") int role) {
         if (Common.IS_SERVICE) {
             CategoryService categoryService = new CategoryService();
-            List<News> list = super.findAll();
+            List<PackageNews> list = super.findAll();
             if (list != null && !list.isEmpty()) {
-                for (final News item : list) {
+                for (final PackageNews item : list) {
                     item.setCategory(categoryService.find(item.getCatId()));
                 }
             }
             return list;
         } else {
-            return SoapFactory.createInstance(INewsSoap.class, this.getClass().getSimpleName()).findAll(role);
+            return SoapFactory.createInstance(IPackageNewsSoap.class, this.getClass().getSimpleName()).findAll(role);
         }
     }
 
     @GET
     @Path("/findByCategory")
     @Produces("application/json")
-    public List<News> findByCategory(@QueryParam("id") long id, @QueryParam("role") int role) {
+    public List<PackageNews> findByCategory(@QueryParam("id") long id, @QueryParam("role") int role) {
         if (Common.IS_SERVICE) {
             if (id > 0) {
                 CategoryService categoryService = new CategoryService();
-                List<News> list = getIBean().findByCategoryId(id);
+                List<PackageNews> list = getIBean().findByCategoryId(id);
                 if (list != null && !list.isEmpty()) {
-                    for (final News item : list) {
+                    for (final PackageNews item : list) {
                         item.setCategory(categoryService.find(item.getCatId()));
                     }
                 }
@@ -130,22 +135,22 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> implem
                 return findAll();
             }
         } else {
-            return SoapFactory.createInstance(INewsSoap.class, this.getClass().getSimpleName()).findByCategory(id, role);
+            return SoapFactory.createInstance(IPackageNewsSoap.class, this.getClass().getSimpleName()).findByCategory(id, role);
         }
     }
 
-    public List<News> findByCategoryAndStatus(long id, int status) {
+    public List<PackageNews> findByCategoryAndStatus(long id, int status) {
         if (Common.IS_SERVICE) {
             CategoryService categoryService = new CategoryService();
-            List<News> list = getIBean().findByCategoryId(id, status);
+            List<PackageNews> list = getIBean().findByCategoryId(id, status);
             if (list != null && !list.isEmpty()) {
-                for (final News item : list) {
+                for (final PackageNews item : list) {
                     item.setCategory(categoryService.find(item.getCatId()));
                 }
             }
             return list;
         } else {
-            return SoapFactory.createInstance(INewsSoap.class, this.getClass().getSimpleName()).findByCategoryAndStatus(id, status);
+            return SoapFactory.createInstance(IPackageNewsSoap.class, this.getClass().getSimpleName()).findByCategoryAndStatus(id, status);
         }
     }
 
@@ -154,11 +159,11 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> implem
     @Produces("application/json")
     public boolean updateNewsStatus(@QueryParam("nid") long nid, @QueryParam("status") int status) {
         if (Common.IS_SERVICE) {
-            News news = find(nid);
+            PackageNews news = find(nid);
             news.setStatus(status);
             return super.save(news) != null;
         } else {
-            return SoapFactory.createInstance(INewsSoap.class, this.getClass().getSimpleName()).updateNewsStatus(nid, status);
+            return SoapFactory.createInstance(IPackageNewsSoap.class, this.getClass().getSimpleName()).updateNewsStatus(nid, status);
         }
     }
 
@@ -167,7 +172,7 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> implem
     @Produces("application/xml")
     public List<NewsItem> findNewsmlG2() {
         if (Common.IS_SERVICE) {
-            List<News> newsList = findAll();
+            List<PackageNews> newsList = findAll();
             List<NewsItem> newsItemList = new ArrayList<>();
             if (newsList != null && newsList.size() > 0) {
                 for (News news : newsList) {
@@ -176,7 +181,7 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> implem
             }
             return newsItemList;
         } else {
-            return SoapFactory.createInstance(INewsSoap.class, this.getClass().getSimpleName()).findNewsmlG2();
+            return SoapFactory.createInstance(IPackageNewsSoap.class, this.getClass().getSimpleName()).findNewsmlG2();
         }
     }
 
@@ -185,7 +190,7 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> implem
     @Produces("application/xml")
     public List<NewsItem> findNewsmlG2ByCategoryId(@PathParam("id") long id) {
         if (Common.IS_SERVICE) {
-            List<News> newsList = findByCategory(id, User.Role.ADMINISTRATOR.getId());
+            List<PackageNews> newsList = findByCategory(id, User.Role.ADMINISTRATOR.getId());
             List<NewsItem> newsItemList = new ArrayList<>();
             if (newsList != null && newsList.size() > 0) {
                 for (News news : newsList) {
@@ -194,7 +199,7 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> implem
             }
             return newsItemList;
         } else {
-            return SoapFactory.createInstance(INewsSoap.class, this.getClass().getSimpleName()).findNewsmlG2ByCategoryId(id);
+            return SoapFactory.createInstance(IPackageNewsSoap.class, this.getClass().getSimpleName()).findNewsmlG2ByCategoryId(id);
         }
     }
 
@@ -205,20 +210,20 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> implem
         if (Common.IS_SERVICE) {
             return convertNewsToNewsMLG2(find(id));
         } else {
-            return SoapFactory.createInstance(INewsSoap.class, this.getClass().getSimpleName()).findNewsmlG2ById(id);
+            return SoapFactory.createInstance(IPackageNewsSoap.class, this.getClass().getSimpleName()).findNewsmlG2ById(id);
         }
     }
 
-    private NewsItem convertNewsToNewsMLG2(News news) {
+    private NewsItem convertNewsToNewsMLG2(PackageNews news) {
         //TODO create newsItem from news object
         NewsItemBuilder newsItem = newsItem();
-        newsItem.guid("urn:newsml:acmenews.com:20141121:US-FINANCE-FED").version(1);
-        newsItem.standardversion("2.19").standard("NewsML-G2").conformance("Power");
+        newsItem.guid("vnanet.org.vn/ttxvn/multimedia"+news.getId()).version(1);
+        newsItem.standardversion("2.15").standard("NewsML-G2").conformance("Power");
         newsItem.addCatalogRef(catalogRef().href("http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_25.xml"));
         newsItem.addCatalogRef(catalogRef().href("http://www.example.com/newsml-g2/catalog.enews_2.xml"));
         newsItem.lang("en");
         ItemMetaBuilder itemMeta = itemMeta();
-        itemMeta.itemClass(qcode().qcode("ninat:text"));
+        itemMeta.itemClass(qcode().qcode("ninat:composite"));
         itemMeta.versionCreated(calendar().rawDate(news.getDateTime()));
         itemMeta.contentModified(calendar().rawDate(news.getDateTime()));
 
@@ -276,7 +281,7 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> implem
         if (Common.IS_SERVICE) {
             return getIBean().countByCategoryId(id);
         } else {
-            return SoapFactory.createInstance(INewsSoap.class, this.getClass().getSimpleName()).countByCategory(id);
+            return SoapFactory.createInstance(IPackageNewsSoap.class, this.getClass().getSimpleName()).countByCategory(id);
         }
     }
 }

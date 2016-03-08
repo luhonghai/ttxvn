@@ -213,6 +213,7 @@ Select by category <select name="selFilterCategory">
 				var btnCommands = [];
 				btnCommands.push('<div class="table-action-group">');
 				if (data[i].status != <%=News.Status.APPROVED.getId()%>
+					&& role == <%=User.Role.ADMINISTRATOR.getId()%>
 					) {
 					btnCommands.push('<button type="button" item-id="' + data[i].id + '" status-id="' + (status + 1) + '" class="btn ' + getStatusClass(status + 1) + ' table-action btn-update-status btn-xs">');
 					btnCommands.push('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>');
@@ -229,8 +230,13 @@ Select by category <select name="selFilterCategory">
 								: new Date(data[i].dateTime).customFormat("#DD#/#MM#/#YYYY#");
 				data[i].newsmlg2 = "<a href='<%=request.getContextPath()%>/rest/news/newsmlg2/" + data[i].id + "' target='_blank'>NewsML-G2 format</a>";
 
-				if (role == <%=User.Role.ADMINISTRATOR.getId()%>) {
+				if (role == <%=User.Role.ADMINISTRATOR.getId()%>
+					|| (data[i].status != <%=News.Status.PENDING.getId()%> &&
+						role == <%=User.Role.REPORTER.getId()%>)) {
 					data[i].skipEdit = true;
+				}
+				if ( role != <%=User.Role.ADMINISTRATOR.getId()%>) {
+					data[i].skipDelete = true;
 				}
 			}
 			return data;

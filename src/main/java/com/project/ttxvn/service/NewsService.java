@@ -146,6 +146,8 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> {
             if (list != null && !list.isEmpty()) {
                 for (final News item : list) {
                     item.setCategory(categoryService.find(item.getCatId()));
+                    //TODO set status is first page
+                    item.setIsFirstPage(true);
                 }
             }
             return list;
@@ -209,6 +211,16 @@ public class NewsService extends BaseService<News, INewsDAO, NewsDAOImpl> {
     public boolean updateNewsStatus(@QueryParam("nid") long nid, @QueryParam("status") int status) {
         News news = find(nid);
         news.setStatus(status);
+        return super.save(news) != null;
+    }
+
+    @GET
+    @Path("/update/firstpage")
+    @Produces("application/json")
+    public boolean updateFirstPage(@QueryParam("nid") long nid) {
+        News news = find(nid);
+        //TODO update database
+
         return super.save(news) != null;
     }
 
